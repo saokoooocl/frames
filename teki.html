@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teki Animado</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Fredoka+One&display=swap" rel="stylesheet">
+    <style>
+        /* Estilo base para el cuerpo del documento */
+        body {
+            /* Usamos un gradiente animado más oscuro para el fondo */
+            background: linear-gradient(45deg, #1a0000, #3d0000, #0a0000, #000000);
+            background-size: 400% 400%;
+            /* Hacemos la animación del fondo más lenta para un efecto sutil */
+            animation: movingBackground 20s ease infinite;
+            /* Quitamos el margen por defecto */
+            margin: 0;
+            /* Usamos Flexbox para centrar el contenido */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Hacemos que ocupe toda la altura de la ventana */
+            height: 100vh;
+            /* Evitamos que el contenido se desborde */
+            overflow: hidden;
+            /* Asignamos una fuente temática */
+            font-family: 'Creepster', cursive;
+            position: relative; /* Necesario para el efecto de viñeta */
+        }
+
+        /* Contenedor para la lluvia de código */
+        #code-rain-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0; /* Detrás de todo */
+        }
+        
+        .code-stream {
+            position: absolute;
+            font-family: 'Courier New', Courier, monospace;
+            color: #8B0000; /* Rojo oscuro */
+            font-size: 1.1rem;
+            text-shadow: 0 0 5px #ff0000;
+            writing-mode: vertical-rl; /* Para que los números caigan verticalmente */
+            animation: fall linear infinite;
+            user-select: none;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(105vh);
+            }
+        }
+
+
+        /* Añadimos un efecto de viñeta para oscurecer los bordes */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(0,0,0,0) 0%, rgba(0,0,0,0.9) 100%);
+            z-index: 1;
+        }
+
+
+        /* Animación para el fondo */
+        @keyframes movingBackground {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Contenedor para el texto animado y el subtítulo */
+        .content-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative; /* Aseguramos que el texto esté sobre la viñeta */
+            z-index: 2;
+        }
+
+        /* Contenedor para el texto animado */
+        .animated-text {
+            /* Usamos Flexbox para alinear las letras */
+            display: flex;
+        }
+
+        /* Estilo para cada letra */
+        .animated-text span {
+            /* Tamaño de la fuente grande para que se vea bien */
+            font-size: 13rem; /* Aumentamos ligeramente el tamaño */
+            /* Color de la letra como sangre oscura */
+            color: #6d0000;
+            /* Aplicamos la animación de pulso sangriento y la nueva de flotar */
+            animation: blood-pulse 1.2s ease-in-out infinite alternate, float 6s ease-in-out infinite;
+            /* Hacemos que la posición sea relativa para la animación */
+            position: relative;
+        }
+
+        /* Definimos la animación de pulso sangriento con efecto de goteo */
+        @keyframes blood-pulse {
+            from {
+                /* Estado inicial del brillo y las gotas */
+                text-shadow:
+                    0 0 5px #ff1100,
+                    0 0 10px #c70000,
+                    2px 2px 2px rgba(0,0,0,0.7),
+                    /* Gotas */
+                    5px 15px 8px #580000,
+                    -4px 22px 12px #4d0000;
+            }
+            to {
+                /* Estado final del brillo, más intenso y gotas más largas */
+                text-shadow:
+                    0 0 10px #ff4500,
+                    0 0 20px #ff1100,
+                    2px 2px 3px rgba(0,0,0,0.7),
+                    /* Gotas más pronunciadas */
+                    6px 18px 10px #580000,
+                    -5px 28px 15px #4d0000,
+                    8px 40px 25px #400000;
+            }
+        }
+
+        /* Nueva animación de flotar */
+        @keyframes float {
+            0% {
+                transform: translateY(0px) rotate(-1.5deg);
+            }
+            50% {
+                transform: translateY(-25px) rotate(1.5deg); /* Flota hacia arriba */
+            }
+            100% {
+                transform: translateY(0px) rotate(-1.5deg);
+            }
+        }
+
+        /* Añadimos un retraso a la animación de cada letra para un efecto escalonado */
+        .animated-text span:nth-child(1) {
+            animation-delay: 0s;
+        }
+        .animated-text span:nth-child(2) {
+            animation-delay: -1.5s;
+        }
+        .animated-text span:nth-child(3) {
+            animation-delay: -3s;
+        }
+        .animated-text span:nth-child(4) {
+            animation-delay: -4.5s;
+        }
+
+        /* Estilo para el subtítulo */
+        .subtitle {
+            font-size: 2.5rem;
+            color: #9e0000; /* Rojo oscuro apagado para el subtítulo */
+            text-shadow: 1px 1px 10px rgba(0, 0, 0, 1);
+            margin-top: 1.5rem;
+            letter-spacing: 3px;
+        }
+
+        /* Hacemos el texto más pequeño en pantallas de móviles para que quepa bien */
+        @media (max-width: 600px) {
+            .animated-text span {
+                font-size: 6.5rem;
+            }
+            .subtitle {
+                font-size: 1.8rem;
+            }
+            .code-stream {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="code-rain-container"></div>
+
+    <div class="content-container">
+        <!-- Contenedor del texto, cada letra en un span para animarla individualmente -->
+        <div class="animated-text">
+            <span>T</span>
+            <span>E</span>
+            <span>K</span>
+            <span>I</span>
+        </div>
+        <div class="subtitle">la diabla de tu infierno</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const rainContainer = document.getElementById('code-rain-container');
+            const chars = "16699".split('');
+
+            const streamCount = Math.floor(window.innerWidth / 20);
+
+            for (let i = 0; i < streamCount; i++) {
+                const stream = document.createElement('div');
+                stream.classList.add('code-stream');
+                
+                stream.style.left = `${i * 20}px`;
+                
+                const startY = -(Math.random() * window.innerHeight * 1.5);
+                stream.style.top = `${startY}px`;
+                
+                const speed = Math.random() * 8 + 6; 
+                stream.style.animationDuration = `${speed}s`;
+                
+                const delay = Math.random() * 6;
+                stream.style.animationDelay = `${delay}s`;
+
+                let streamContent = '';
+                const streamLength = Math.floor(Math.random() * 20) + 15;
+                for (let j = 0; j < streamLength; j++) {
+                    const char = chars[Math.floor(Math.random() * chars.length)];
+                    if (j === streamLength - 1) {
+                        // El último caracter (la "cabeza" de la lluvia) es más brillante
+                        streamContent += `<span style="color: #ff4500; text-shadow: 0 0 10px #ff1100;">${char}</span>`;
+                    } else {
+                        streamContent += `<span>${char}</span>`;
+                    }
+                }
+                stream.innerHTML = streamContent;
+                rainContainer.appendChild(stream);
+            }
+        });
+    </script>
+</body>
+</html>

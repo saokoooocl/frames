@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Efecto Código SAOKO</title>
+    <style>
+        /* Estilos para el cuerpo del documento */
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Evita las barras de desplazamiento */
+            background-color: #000; /* Fondo negro */
+        }
+        /* Estilos para el canvas */
+        #matrixCanvas {
+            display: block; /* Asegura que el canvas no tenga espacio extra */
+        }
+    </style>
+</head>
+<body>
+    <!-- El elemento canvas donde se dibujará la animación -->
+    <canvas id="matrixCanvas"></canvas>
+
+    <script>
+        // Obtener el elemento canvas y su contexto 2D
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Función para ajustar el tamaño del canvas al de la ventana
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        // Ajustar el tamaño del canvas inicialmente y cada vez que la ventana cambie de tamaño
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // El texto que se usará en la animación, convertido en un array de caracteres
+        const text = "SAOKO".split('');
+
+        const fontSize = 16;
+        // Calcular el número de columnas basado en el ancho del canvas y el tamaño de la fuente
+        let columns = Math.floor(canvas.width / fontSize);
+
+        // Crear un array para almacenar la posición 'y' de cada gota de texto en cada columna
+        const drops = [];
+        for (let i = 0; i < columns; i++) {
+            drops[i] = 1;
+        }
+
+        // Función principal para dibujar la animación
+        function draw() {
+            // Rellenar el canvas con un color negro semi-transparente para crear el efecto de estela
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Establecer el color y la fuente del texto
+            ctx.fillStyle = '#F00'; // Rojo brillante
+            ctx.font = `${fontSize}px monospace`;
+
+            // Recorrer cada columna (cada gota)
+            for (let i = 0; i < drops.length; i++) {
+                // Elegir un caracter aleatorio de nuestro texto
+                const randomChar = text[Math.floor(Math.random() * text.length)];
+                
+                // Calcular la posición x e y para dibujar el caracter
+                const x = i * fontSize;
+                const y = drops[i] * fontSize;
+                
+                // Dibujar el caracter en el canvas
+                ctx.fillText(randomChar, x, y);
+
+                // Si la gota llega al final de la pantalla, la reiniciamos al principio con una probabilidad
+                // Esto hace que el efecto sea más aleatorio y no todas las columnas caigan al mismo tiempo
+                if (y > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+
+                // Incrementar la posición 'y' de la gota para que caiga
+                drops[i]++;
+            }
+        }
+
+        // Iniciar la animación, llamando a la función draw cada 33 milisegundos (~30 FPS)
+        setInterval(draw, 33);
+
+        // Actualizar el número de columnas si la ventana cambia de tamaño
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            columns = Math.floor(canvas.width / fontSize);
+            // Reiniciar las gotas para el nuevo tamaño
+            for (let i = 0; i < columns; i++) {
+                drops[i] = 1;
+            }
+        });
+    </script>
+</body>
+</html>
+
+

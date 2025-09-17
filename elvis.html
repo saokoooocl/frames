@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elvis - Fondo Animado</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Source+Sans+Pro:wght@300&display=swap" rel="stylesheet">
+    <style>
+        /* Estilo base para el cuerpo del documento */
+        body {
+            /* Aplicamos la animación de fondo */
+            animation: pulseBlue 15s ease-in-out infinite;
+            background-size: 200% 200%; /* Tamaño para la animación del gradiente */
+            /* Quitamos el margen por defecto */
+            margin: 0;
+            /* Usamos Flexbox para centrar el contenido */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Hacemos que ocupe toda la altura de la ventana */
+            height: 100vh;
+            /* Evitamos que el contenido se desborde */
+            overflow: hidden;
+            /* Asignamos una fuente con estilo */
+            font-family: 'Lobster', cursive;
+            position: relative; /* Contexto para el pseudo-elemento */
+            z-index: 0;
+        }
+        
+        /* Animación para el fondo */
+        @keyframes pulseBlue {
+            0% {
+                background-color: #0c0c2c;
+            }
+            25% {
+                background-color: #1a2a6c;
+            }
+            50% {
+                background-color: #00003B;
+            }
+            75% {
+                background-color: #1a2a6c;
+            }
+            100% {
+                background-color: #0c0c2c;
+            }
+        }
+
+
+        /* Pseudo-elemento para el fondo de imagen con opacidad baja */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* URL de la imagen de fondo actualizada */
+            background-image: url('https://xatimg.com/image/tVORqQV1OunC.png');
+            background-size: cover;
+            /* Ajustamos la posición para centrar la imagen */
+            background-position: center; 
+            opacity: 0.2; /* Opacidad baja para que sea sutil */
+            z-index: -1; /* Detrás de todo el contenido */
+        }
+
+        /* Contenedor para la lluvia de símbolos */
+        #symbols-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1; /* Detrás del texto pero sobre el fondo */
+            pointer-events: none; /* Para no interferir con el mouse */
+            overflow: hidden;
+        }
+
+        .symbol {
+            position: absolute;
+            top: -50px; /* Empezar fuera de la pantalla */
+            color: rgba(255, 255, 255, 0.4); /* Color blanco semi-transparente */
+            animation: fall linear infinite;
+            font-size: 2em; /* Tamaño de los símbolos */
+            white-space: nowrap; /* Evita que el número se parta en varias líneas */
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(105vh);
+            }
+        }
+
+        /* Contenedor para el texto animado */
+        .content-container {
+            position: relative;
+            z-index: 2; /* Por encima de la lluvia y la foto de fondo */
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        /* Contenedor para el texto animado */
+        .animated-text {
+            /* Usamos Flexbox para alinear las letras */
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Estilo para cada letra */
+        .animated-text span {
+            /* Tamaño de la fuente grande y responsivo */
+            font-size: clamp(7rem, 28vw, 21rem);
+            /* Color de texto blanco */
+            color: white;
+            /* Sombra de texto original para dar profundidad y legibilidad */
+            text-shadow: 
+                3px 3px 0px #00003B, 
+                6px 6px 0px #00005B,
+                9px 9px 8px rgba(0,0,0,0.5);
+
+            /* Aplicamos la animación de pulso */
+            animation: pulseEffect 3s ease-in-out infinite;
+            /* Hacemos que la posición sea relativa para la animación */
+            position: relative;
+        }
+
+        /* Definimos la animación de pulso suave */
+        @keyframes pulseEffect {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        /* Añadimos un retraso a la animación de cada letra para un efecto de ola */
+        .animated-text span:nth-child(1) { animation-delay: 0s; }
+        .animated-text span:nth-child(2) { animation-delay: -0.2s; }
+        .animated-text span:nth-child(3) { animation-delay: -0.4s; }
+        .animated-text span:nth-child(4) { animation-delay: -0.6s; }
+        .animated-text span:nth-child(5) { animation-delay: -0.8s; }
+        
+        /* Estilos para la frase */
+        .quote-text {
+            margin-top: 0rem; /* Ajustado para subir el texto */
+            display: inline-block;
+        }
+
+        .quote-text span {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: clamp(0.8rem, 3vw, 1.5rem);
+            color: rgba(255, 255, 255, 0.85);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+            position: relative;
+            display: inline-block;
+            animation: waveEffect 3s ease-in-out infinite;
+        }
+
+        @keyframes waveEffect {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        #ip-display {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.8rem;
+            z-index: 10;
+        }
+
+        /* Retraso de animación para cada letra de la frase */
+        .quote-text span:nth-child(1) { animation-delay: 0.0s; }
+        .quote-text span:nth-child(2) { animation-delay: 0.05s; }
+        .quote-text span:nth-child(3) { animation-delay: 0.1s; }
+        .quote-text span:nth-child(4) { animation-delay: 0.15s; }
+        .quote-text span:nth-child(5) { animation-delay: 0.2s; }
+        .quote-text span:nth-child(6) { animation-delay: 0.25s; }
+        .quote-text span:nth-child(7) { animation-delay: 0.3s; }
+        .quote-text span:nth-child(8) { animation-delay: 0.35s; }
+        .quote-text span:nth-child(9) { animation-delay: 0.4s; }
+        .quote-text span:nth-child(10) { animation-delay: 0.45s; }
+        .quote-text span:nth-child(11) { animation-delay: 0.5s; }
+        .quote-text span:nth-child(12) { animation-delay: 0.55s; }
+        .quote-text span:nth-child(13) { animation-delay: 0.6s; }
+        .quote-text span:nth-child(14) { animation-delay: 0.65s; }
+        .quote-text span:nth-child(15) { animation-delay: 0.7s; }
+        .quote-text span:nth-child(16) { animation-delay: 0.75s; }
+        .quote-text span:nth-child(17) { animation-delay: 0.8s; }
+        .quote-text span:nth-child(18) { animation-delay: 0.85s; }
+        .quote-text span:nth-child(19) { animation-delay: 0.9s; }
+        .quote-text span:nth-child(20) { animation-delay: 0.95s; }
+        .quote-text span:nth-child(21) { animation-delay: 1.0s; }
+        .quote-text span:nth-child(22) { animation-delay: 1.05s; }
+        .quote-text span:nth-child(23) { animation-delay: 1.1s; }
+        .quote-text span:nth-child(24) { animation-delay: 1.15s; }
+        .quote-text span:nth-child(25) { animation-delay: 1.2s; }
+        .quote-text span:nth-child(26) { animation-delay: 1.25s; }
+        .quote-text span:nth-child(27) { animation-delay: 1.3s; }
+        .quote-text span:nth-child(28) { animation-delay: 1.35s; }
+        .quote-text span:nth-child(29) { animation-delay: 1.4s; }
+        .quote-text span:nth-child(30) { animation-delay: 1.45s; }
+        .quote-text span:nth-child(31) { animation-delay: 1.5s; }
+        .quote-text span:nth-child(32) { animation-delay: 1.55s; }
+        .quote-text span:nth-child(33) { animation-delay: 1.6s; }
+        .quote-text span:nth-child(34) { animation-delay: 1.65s; }
+        .quote-text span:nth-child(35) { animation-delay: 1.7s; }
+        .quote-text span:nth-child(36) { animation-delay: 1.75s; }
+        .quote-text span:nth-child(37) { animation-delay: 1.8s; }
+        .quote-text span:nth-child(38) { animation-delay: 1.85s; }
+        .quote-text span:nth-child(39) { animation-delay: 1.9s; }
+        .quote-text span:nth-child(40) { animation-delay: 1.95s; }
+        .quote-text span:nth-child(41) { animation-delay: 2.0s; }
+        .quote-text span:nth-child(42) { animation-delay: 2.05s; }
+        .quote-text span:nth-child(43) { animation-delay: 2.1s; }
+        .quote-text span:nth-child(44) { animation-delay: 2.15s; }
+        .quote-text span:nth-child(45) { animation-delay: 2.2s; }
+        .quote-text span:nth-child(46) { animation-delay: 2.25s; }
+        .quote-text span:nth-child(47) { animation-delay: 2.3s; }
+        .quote-text span:nth-child(48) { animation-delay: 2.35s; }
+        .quote-text span:nth-child(49) { animation-delay: 2.4s; }
+        .quote-text span:nth-child(50) { animation-delay: 2.45s; }
+        .quote-text span:nth-child(51) { animation-delay: 2.5s; }
+        .quote-text span:nth-child(52) { animation-delay: 2.55s; }
+        .quote-text span:nth-child(53) { animation-delay: 2.6s; }
+        .quote-text span:nth-child(54) { animation-delay: 2.65s; }
+        .quote-text span:nth-child(55) { animation-delay: 2.7s; }
+        .quote-text span:nth-child(56) { animation-delay: 2.75s; }
+        .quote-text span:nth-child(57) { animation-delay: 2.8s; }
+        .quote-text span:nth-child(58) { animation-delay: 2.85s; }
+        .quote-text span:nth-child(59) { animation-delay: 2.9s; }
+        .quote-text span:nth-child(60) { animation-delay: 2.95s; }
+        .quote-text span:nth-child(61) { animation-delay: 3.0s; }
+        .quote-text span:nth-child(62) { animation-delay: 3.05s; }
+        .quote-text span:nth-child(63) { animation-delay: 3.1s; }
+        .quote-text span:nth-child(64) { animation-delay: 3.15s; }
+        .quote-text span:nth-child(65) { animation-delay: 3.2s; }
+        .quote-text span:nth-child(66) { animation-delay: 3.25s; }
+        .quote-text span:nth-child(67) { animation-delay: 3.3s; }
+        .quote-text span:nth-child(68) { animation-delay: 3.35s; }
+        .quote-text span:nth-child(69) { animation-delay: 3.4s; }
+        .quote-text span:nth-child(70) { animation-delay: 3.45s; }
+        .quote-text span:nth-child(71) { animation-delay: 3.5s; }
+        .quote-text span:nth-child(72) { animation-delay: 3.55s; }
+        .quote-text span:nth-child(73) { animation-delay: 3.6s; }
+        .quote-text span:nth-child(74) { animation-delay: 3.65s; }
+        .quote-text span:nth-child(75) { animation-delay: 3.7s; }
+        .quote-text span:nth-child(76) { animation-delay: 3.75s; }
+        .quote-text span:nth-child(77) { animation-delay: 3.8s; }
+    </style>
+</head>
+<body>
+    <div id="symbols-rain"></div>
+
+    <div class="content-container">
+        <!-- Contenedor del texto, cada letra en un span para animarla individualmente -->
+        <div class="animated-text">
+            <span>E</span>
+            <span>l</span>
+            <span>v</span>
+            <span>i</span>
+            <span>s</span>
+        </div>
+        <!-- Contenedor de la frase con efecto de ola -->
+        <div class="quote-text">
+            <span>E</span><span>l</span><span>&nbsp;</span><span>m</span><span>i</span><span>s</span><span>t</span><span>e</span><span>r</span><span>i</span><span>o</span><span>&nbsp;</span><span>c</span><span>r</span><span>e</span><span>a</span><span>&nbsp;</span><span>a</span><span>s</span><span>o</span><span>m</span><span>b</span><span>r</span><span>o</span><span>,</span><span>&nbsp;</span><span>y</span><span>&nbsp;</span><span>e</span><span>l</span><span>&nbsp;</span><span>a</span><span>s</span><span>o</span><span>m</span><span>b</span><span>r</span><span>o</span><span>&nbsp;</span><span>e</span><span>s</span><span>&nbsp;</span><span>l</span><span>a</span><span>&nbsp;</span><span>b</span><span>a</span><span>s</span><span>e</span><span>&nbsp;</span><span>d</span><span>e</span><span>l</span><span>&nbsp;</span><span>d</span><span>e</span><span>s</span><span>e</span><span>o</span><span>&nbsp;</span><span>d</span><span>e</span><span>&nbsp;</span><span>e</span><span>n</span><span>t</span><span>e</span><span>n</span><span>d</span><span>e</span><span>r</span>
+        </div>
+    </div>
+    
+    <div id="ip-display"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const rainContainer = document.getElementById('symbols-rain');
+            const numberOfSymbols = 50; // Cantidad de símbolos lloviendo
+
+            for (let i = 0; i < numberOfSymbols; i++) {
+                const symbolEl = document.createElement('span');
+                symbolEl.classList.add('symbol');
+                
+                // Asignar aleatoriamente el número o el símbolo de infinito
+                if (Math.random() > 0.5) {
+                    symbolEl.textContent = '1454394476';
+                    symbolEl.style.writingMode = 'vertical-rl'; // Hace que el texto caiga verticalmente
+                    symbolEl.style.fontSize = `${Math.random() * 0.8 + 0.4}em`; // Tamaño más pequeño para los números
+                } else {
+                    symbolEl.textContent = '∞';
+                    symbolEl.style.fontSize = `${Math.random() * 2 + 1}em`; // Tamaño original para el infinito
+                }
+
+                // Posición horizontal aleatoria
+                symbolEl.style.left = `${Math.random() * 100}vw`;
+                
+                // Duración de la animación aleatoria
+                symbolEl.style.animationDuration = `${Math.random() * 6 + 5}s`; // entre 5s y 11s
+                
+                // Retraso de la animación aleatorio
+                symbolEl.style.animationDelay = `${Math.random() * 7}s`;
+
+                // Opacidad aleatoria
+                symbolEl.style.opacity = Math.random() * 0.5 + 0.3; // entre 0.3 y 0.8
+
+                rainContainer.appendChild(symbolEl);
+            }
+
+            // Obtener y mostrar la IP
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => {
+                    const ipDisplay = document.getElementById('ip-display');
+                    ipDisplay.textContent = `IP: ${data.ip}`;
+                })
+                .catch(error => {
+                    console.error('Error al obtener la IP:', error);
+                    const ipDisplay = document.getElementById('ip-display');
+                    ipDisplay.textContent = 'No se pudo obtener la IP';
+                });
+        });
+    </script>
+</body>
+</html>
+

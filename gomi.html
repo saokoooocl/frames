@@ -6,16 +6,64 @@
     <title>GOMI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Dancing+Script:wght@700&family=Lobster&display=swap" rel="stylesheet">
     <style>
         /* Estilos generales y de fondo */
         body {
             margin: 0;
             padding: 0;
             height: 100vh;
-            background: #FADADD; /* Rosa pastel */
             overflow: hidden;
             font-family: 'Fredoka One', cursive;
+            background-color: #FADADD; /* Color de fondo base */
+        }
+
+        /* Contenedor para el GIF de fondo */
+        .background-gif {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Colocado en el fondo */
+            overflow: hidden; /* Oculta el exceso del zoom */
+        }
+
+        .background-gif img {
+            width: 100%; 
+            height: 100%;
+            object-fit: cover;
+            animation: zoomInOut 6s ease-in-out infinite alternate; /* Efecto de zoom más rápido */
+        }
+        
+        @keyframes zoomInOut {
+            from {
+                transform: scale(1.05);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+        
+        /* Capa rosa con opacidad cambiante */
+        .pink-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f8bbd0;
+            z-index: 1; /* Encima del GIF */
+            animation: pulsePink 6s ease-in-out infinite alternate; /* Efecto de pulso más rápido */
+        }
+
+        @keyframes pulsePink {
+            from {
+                opacity: 0.2;
+            }
+            to {
+                opacity: 0.6;
+            }
         }
 
         /* Contenedor principal para centrar el texto */
@@ -26,36 +74,40 @@
             align-items: center;
             height: 100%;
             position: relative;
-            z-index: 2;
+            z-index: 3; /* Encima de todo */
+            text-align: center;
+            padding: 1rem;
+            box-sizing: border-box;
         }
         
         /* Estilo del texto "GOMI" */
         h1 {
-            font-size: clamp(8rem, 30vw, 20rem); /* Tamaño de fuente responsivo */
-            color: rgba(255, 255, 255, 0.85);
+            font-family: 'Fredoka One', cursive;
+            font-size: clamp(6rem, 28vw, 18rem);
+            color: #fce4ec; /* Light pink color */
             text-transform: uppercase;
             margin: 0;
-            text-shadow: 
-                0 2px 2px #f8bbd0,
-                0 4px 4px #f48fb1,
-                0 6px 6px #f06292,
-                0 8px 8px #ec407a,
-                0 10px 15px rgba(0, 0, 0, 0.3);
-            animation: wobble 2s ease-in-out infinite;
+            text-shadow:
+                -1px -1px 1px #fff,
+                -2px -2px 1px #fff,
+                -3px -3px 1px #f48fb1,
+                -4px -4px 1px #f06292,
+                -5px -5px 10px rgba(0, 0, 0, 0.4); /* Main shadow for depth */
+            animation: wobble 3s ease-in-out infinite;
         }
 
         /* Estilo para la cita */
         .quote {
-            font-size: clamp(0.9rem, 2.5vw, 1.5rem); /* Ajustado para ser más pequeño */
-            color: rgba(255, 255, 255, 0.8);
-            margin-top: 1rem;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            font-weight: bold;
-            text-align: center;
-            padding: 0 1rem; /* Padding ajustado */
-            line-height: 1.4; /* Line-height ajustado */
-            box-sizing: border-box; /* Asegura que el padding se incluya en el ancho total */
-            min-height: 3em; /* Espacio para las dos líneas de texto */
+            font-family: 'Dancing Script', cursive; /* Nueva fuente cursiva */
+            font-size: clamp(1.2rem, 3vw, 2rem); /* Tamaño ajustado para la nueva fuente */
+            color: #c2185b; /* Tono de rosa más oscuro y vibrante */
+            margin-top: 1.5rem;
+            text-shadow: 0 1px 3px rgba(255, 255, 255, 0.5); /* Sombra clara para mejor lectura */
+            font-weight: 700;
+            padding: 0 1rem;
+            line-height: 1.4;
+            box-sizing: border-box;
+            min-height: 3em;
         }
 
         /* Filtro para cambiar el color del emoji del diablito */
@@ -67,7 +119,7 @@
         #typewriter-text::after {
             content: '_';
             font-weight: bold;
-            color: rgba(255, 255, 255, 0.8);
+            color: #c2185b; /* Color del cursor a juego con el nuevo texto */
             animation: blink 1s step-end infinite;
         }
 
@@ -91,13 +143,13 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 1;
+            z-index: 2; /* Debajo del texto, encima de la capa rosa */
         }
 
         /* Estilo base de una gominola */
         .jellybean {
             position: absolute;
-            top: -30px; /* Empezar fuera de la pantalla */
+            top: -30px;
             width: 20px;
             height: 30px;
             border-radius: 50% / 40%;
@@ -105,18 +157,7 @@
             animation: fall linear infinite;
         }
 
-        /* Estilo para las letras "saoko" */
-        .saoko-letter {
-            position: absolute;
-            top: -50px; /* Empezar fuera de la pantalla */
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 2rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            animation: fall linear infinite;
-        }
-
-
-        /* Animación de caída */
+        /* Animación de caída con rotación (para las gominolas) */
         @keyframes fall {
             0% {
                 transform: translateY(0) rotate(0deg);
@@ -129,6 +170,12 @@
     </style>
 </head>
 <body>
+    
+    <div class="background-gif">
+        <img src="https://xatimg.com/image/9MTMx8qVXtol.gif" alt="background gif">
+    </div>
+
+    <div class="pink-overlay"></div>
 
     <div class="main-container">
         <h1>Gomi</h1>
@@ -140,14 +187,13 @@
     </div>
 
     <div class="falling-elements-container" id="falling-elements-container">
-        <!-- Las gominolas y letras se generarán aquí con JavaScript -->
+        <!-- Las gominolas se generarán aquí con JavaScript -->
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const container = document.getElementById('falling-elements-container');
-            const jellybeanCount = 40; // Cantidad de gominolas
-            const saokoLetterCount = 40; // Cantidad de letras
+            const jellybeanCount = 40; // Restaurado a un número mayor de gominolas
             const colors = [
                 '#ff8a80', /* Rojo claro */
                 '#ffeb3b', /* Amarillo */
@@ -173,34 +219,16 @@
                 container.appendChild(jellybean);
             };
 
-            // Función para crear una letra de "saoko"
-            const createSaokoLetter = () => {
-                const letter = document.createElement('span');
-                letter.classList.add('saoko-letter');
-                const saoko = "saoko";
-                letter.innerText = saoko[Math.floor(Math.random() * saoko.length)];
-                letter.style.left = `${Math.random() * 100}vw`;
-                letter.style.fontSize = `${Math.random() * 1.5 + 1}rem`; // Tamaño aleatorio
-                const duration = Math.random() * 7 + 7; // Duración diferente
-                const delay = Math.random() * 10;
-                letter.style.animationDuration = `${duration}s`;
-                letter.style.animationDelay = `${delay}s`;
-                container.appendChild(letter);
-            };
-
-            // Crear los elementos
+            // Crear los elementos que caen
             for (let i = 0; i < jellybeanCount; i++) {
                 createJellybean();
-            }
-            for (let i = 0; i < saokoLetterCount; i++) {
-                createSaokoLetter();
             }
 
             // --- Efecto de máquina de escribir ---
             const typewriterElement = document.getElementById('typewriter-text');
             const lines = [
-                "Me dicen Gomi, pero no de dulce",
-                "Aunque si me pruebas, puede que te endulce"
+                "Soy la tentación que estabas esperando.",
+                "Una vez que me pruebas, siempre quieres más."
             ];
             const fullText = lines.join('<br>');
             let charIndex = 0;
@@ -211,29 +239,27 @@
 
             function typeWriter() {
                 if (isDeleting) {
-                    // Borrando
                     if (charIndex > 0) {
                         typewriterElement.innerHTML = fullText.substring(0, charIndex - 1);
                         charIndex--;
                         setTimeout(typeWriter, deletingSpeed);
                     } else {
                         isDeleting = false;
-                        setTimeout(typeWriter, 500); // Pausa antes de volver a escribir
+                        setTimeout(typeWriter, 500);
                     }
                 } else {
-                    // Escribiendo
                     if (charIndex < fullText.length) {
                         typewriterElement.innerHTML = fullText.substring(0, charIndex + 1);
                         charIndex++;
                         setTimeout(typeWriter, typingSpeed);
                     } else {
                         isDeleting = true;
-                        setTimeout(typeWriter, pauseDuration); // Pausa al final
+                        setTimeout(typeWriter, pauseDuration);
                     }
                 }
             }
 
-            typeWriter(); // Iniciar el efecto
+            typeWriter();
         });
     </script>
 </body>

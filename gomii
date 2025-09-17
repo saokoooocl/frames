@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GOMI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Dancing+Script:wght@700&family=Lobster&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos generales y de fondo */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Fredoka One', cursive;
+            background-color: #FADADD; /* Color de fondo base */
+        }
+
+        /* Contenedor para el GIF de fondo */
+        .background-gif {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Colocado en el fondo */
+            overflow: hidden; /* Oculta el exceso del zoom */
+        }
+
+        .background-gif img {
+            width: 100%; 
+            height: 100%;
+            object-fit: cover;
+            animation: zoomInOut 6s ease-in-out infinite alternate; /* Efecto de zoom más rápido */
+        }
+        
+        @keyframes zoomInOut {
+            from {
+                transform: scale(1.05);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+        
+        /* Capa rosa con opacidad cambiante */
+        .pink-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f8bbd0;
+            z-index: 1; /* Encima del GIF */
+            animation: pulsePink 6s ease-in-out infinite alternate; /* Efecto de pulso más rápido */
+        }
+
+        @keyframes pulsePink {
+            from {
+                opacity: 0.2;
+            }
+            to {
+                opacity: 0.6;
+            }
+        }
+
+        /* Contenedor principal para centrar el texto */
+        .main-container {
+            display: flex;
+            flex-direction: column; /* Para apilar los textos verticalmente */
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            position: relative;
+            z-index: 3; /* Encima de todo */
+            text-align: center;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+        
+        /* Estilo del texto "GOMI" */
+        h1 {
+            font-family: 'Fredoka One', cursive;
+            font-size: clamp(6rem, 28vw, 18rem);
+            color: #fce4ec; /* Light pink color */
+            text-transform: uppercase;
+            margin: 0;
+            text-shadow:
+                -1px -1px 1px #fff,
+                -2px -2px 1px #fff,
+                -3px -3px 1px #f48fb1,
+                -4px -4px 1px #f06292,
+                -5px -5px 10px rgba(0, 0, 0, 0.4); /* Main shadow for depth */
+            animation: wobble 3s ease-in-out infinite;
+        }
+
+        /* Estilo para la cita */
+        .quote {
+            font-family: 'Dancing Script', cursive; /* Nueva fuente cursiva */
+            font-size: clamp(1.2rem, 3vw, 2rem); /* Tamaño ajustado para la nueva fuente */
+            color: #c2185b; /* Tono de rosa más oscuro y vibrante */
+            margin-top: 1.5rem;
+            text-shadow: 0 1px 3px rgba(255, 255, 255, 0.5); /* Sombra clara para mejor lectura */
+            font-weight: 700;
+            padding: 0 1rem;
+            line-height: 1.4;
+            box-sizing: border-box;
+            min-height: 3em;
+        }
+
+        /* Filtro para cambiar el color del emoji del diablito */
+        .devil-emoji {
+            filter: hue-rotate(-80deg) saturate(4) brightness(1.2);
+        }
+
+        /* --- Estilos para el efecto de máquina de escribir --- */
+        #typewriter-text::after {
+            content: '_';
+            font-weight: bold;
+            color: #c2185b; /* Color del cursor a juego con el nuevo texto */
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            from, to { opacity: 0; }
+            50% { opacity: 1; }
+        }
+        /* --------------------------------------------------- */
+
+        /* Animación de "bamboleo" para el texto */
+        @keyframes wobble {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.02) rotate(-1deg); }
+            75% { transform: scale(0.98) rotate(1deg); }
+        }
+
+        /* Contenedor para los elementos que caen */
+        .falling-elements-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2; /* Debajo del texto, encima de la capa rosa */
+        }
+
+        /* Estilo base de una gominola */
+        .jellybean {
+            position: absolute;
+            top: -30px;
+            width: 20px;
+            height: 30px;
+            border-radius: 50% / 40%;
+            opacity: 0.9;
+            animation: fall linear infinite;
+        }
+
+        /* Animación de caída con rotación (para las gominolas) */
+        @keyframes fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="background-gif">
+        <img src="https://xatimg.com/image/9MTMx8qVXtol.gif" alt="background gif">
+    </div>
+
+    <div class="pink-overlay"></div>
+
+    <div class="main-container">
+        <h1>Gomi</h1>
+        <p class="quote">
+            <span class="devil-emoji">😈</span>
+            <span id="typewriter-text"></span>
+            <span class="devil-emoji">😈</span>
+        </p>
+    </div>
+
+    <div class="falling-elements-container" id="falling-elements-container">
+        <!-- Las gominolas se generarán aquí con JavaScript -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('falling-elements-container');
+            const jellybeanCount = 40; // Restaurado a un número mayor de gominolas
+            const colors = [
+                '#ff8a80', /* Rojo claro */
+                '#ffeb3b', /* Amarillo */
+                '#80d8ff', /* Azul claro */
+                '#ccff90', /* Verde lima */
+                '#ff80ab', /* Rosa */
+                '#ea80fc'  /* Púrpura */
+            ];
+
+            // Función para crear una gominola
+            const createJellybean = () => {
+                const jellybean = document.createElement('div');
+                jellybean.classList.add('jellybean');
+                const size = Math.random() * 20 + 10;
+                jellybean.style.width = `${size}px`;
+                jellybean.style.height = `${size * 1.5}px`;
+                jellybean.style.left = `${Math.random() * 100}vw`;
+                jellybean.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                const duration = Math.random() * 8 + 6;
+                const delay = Math.random() * 10;
+                jellybean.style.animationDuration = `${duration}s`;
+                jellybean.style.animationDelay = `${delay}s`;
+                container.appendChild(jellybean);
+            };
+
+            // Crear los elementos que caen
+            for (let i = 0; i < jellybeanCount; i++) {
+                createJellybean();
+            }
+
+            // --- Efecto de máquina de escribir ---
+            const typewriterElement = document.getElementById('typewriter-text');
+            const lines = [
+                "Soy la tentación que estabas esperando.",
+                "Una vez que me pruebas, siempre quieres más."
+            ];
+            const fullText = lines.join('<br>');
+            let charIndex = 0;
+            let isDeleting = false;
+            const typingSpeed = 120;
+            const deletingSpeed = 60;
+            const pauseDuration = 2000;
+
+            function typeWriter() {
+                if (isDeleting) {
+                    if (charIndex > 0) {
+                        typewriterElement.innerHTML = fullText.substring(0, charIndex - 1);
+                        charIndex--;
+                        setTimeout(typeWriter, deletingSpeed);
+                    } else {
+                        isDeleting = false;
+                        setTimeout(typeWriter, 500);
+                    }
+                } else {
+                    if (charIndex < fullText.length) {
+                        typewriterElement.innerHTML = fullText.substring(0, charIndex + 1);
+                        charIndex++;
+                        setTimeout(typeWriter, typingSpeed);
+                    } else {
+                        isDeleting = true;
+                        setTimeout(typeWriter, pauseDuration);
+                    }
+                }
+            }
+
+            typeWriter();
+        });
+    </script>
+</body>
+</html>
+

@@ -168,7 +168,7 @@
             }
         }
 
-        #ip-display {
+        #info-display {
             position: fixed;
             bottom: 10px;
             right: 10px;
@@ -176,6 +176,7 @@
             font-family: 'Source Sans Pro', sans-serif;
             font-size: 0.8rem;
             z-index: 10;
+            text-align: right;
         }
 
         /* Retraso de animación para cada letra de la frase */
@@ -276,7 +277,7 @@
         </div>
     </div>
     
-    <div id="ip-display"></div>
+    <div id="info-display"></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -312,17 +313,30 @@
                 rainContainer.appendChild(symbolEl);
             }
 
-            // Obtener y mostrar la IP
-            fetch('https://api.ipify.org?format=json')
+            // Contador de visitas
+            let viewCount = localStorage.getItem('pageViewCount_elvis');
+            if (viewCount) {
+                viewCount = Number(viewCount) + 1;
+            } else {
+                viewCount = 1;
+            }
+            localStorage.setItem('pageViewCount_elvis', viewCount);
+
+
+            // Obtener y mostrar IP y ubicación
+            const infoDisplay = document.getElementById('info-display');
+            fetch('https://ipapi.co/json/')
                 .then(response => response.json())
                 .then(data => {
-                    const ipDisplay = document.getElementById('ip-display');
-                    ipDisplay.textContent = `IP: ${data.ip}`;
+                    const ip = data.ip;
+                    const city = data.city || 'Desconocida';
+                    const country = data.country_name || 'Desconocido';
+                    
+                    infoDisplay.innerHTML = `IP: ${ip}<br>Ubicación: ${city}, ${country}<br>Visitas: ${viewCount}`;
                 })
                 .catch(error => {
-                    console.error('Error al obtener la IP:', error);
-                    const ipDisplay = document.getElementById('ip-display');
-                    ipDisplay.textContent = 'No se pudo obtener la IP';
+                    console.error('Error al obtener la IP y ubicación:', error);
+                    infoDisplay.innerHTML = `Visitas: ${viewCount}<br>No se pudo obtener IP/Ubicación`;
                 });
         });
     </script>

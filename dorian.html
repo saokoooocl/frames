@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dorian - Fondo Animado</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Se ha cambiado 'Lobster' por 'Audiowide' para el nombre principal -->
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Source+Sans+Pro:wght@300&display=swap" rel="stylesheet">
+    <style>
+        /* Estilo base para el cuerpo del documento */
+        body {
+            /* Nuevo fondo de cielo estrellado */
+            background-color: #0c0c2c;
+            /* Quitamos el margen por defecto */
+            margin: 0;
+            /* Usamos Flexbox para centrar el contenido */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Hacemos que ocupe toda la altura de la ventana */
+            height: 100vh;
+            /* Evitamos que el contenido se desborde */
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Contenedor para el fondo de estrellas */
+        #stars-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle 5s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Contenedor para la lluvia de símbolos */
+        #symbols-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1; /* Detrás del texto pero sobre el fondo */
+            pointer-events: none; /* Para no interferir con el mouse */
+            overflow: hidden;
+        }
+
+        .symbol {
+            position: absolute;
+            top: -50px; /* Empezar fuera de la pantalla */
+            color: rgba(255, 255, 255, 0.4); /* Color blanco semi-transparente */
+            /* La animación se asignará directamente por JavaScript */
+            font-size: 2em; /* Tamaño de los símbolos */
+            white-space: nowrap;
+        }
+
+        /* Nuevo efecto de caída para los números */
+        @keyframes zoomAndFall {
+            0% {
+                transform: translateY(0) scale(0.2);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(105vh) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* Contenedor para el texto animado */
+        .content-container {
+            position: relative;
+            z-index: 2; /* Por encima de la lluvia */
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .animated-text {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Estilo para cada letra */
+        .animated-text span {
+            font-family: 'Audiowide', cursive; /* Nueva tipografía */
+            font-size: clamp(6rem, 25vw, 18rem); /* Tamaño ajustado para la nueva fuente */
+            color: white;
+            text-shadow: 
+                3px 3px 0px #00003B, 
+                6px 6px 0px #00005B,
+                9px 9px 8px rgba(0,0,0,0.5);
+            animation: pulseEffect 3s ease-in-out infinite;
+            position: relative;
+        }
+
+        /* Animación de pulso para las letras */
+        @keyframes pulseEffect {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        /* Retraso en la animación para cada letra de "Dorian" */
+        .animated-text span:nth-child(1) { animation-delay: 0s; }
+        .animated-text span:nth-child(2) { animation-delay: -0.2s; }
+        .animated-text span:nth-child(3) { animation-delay: -0.4s; }
+        .animated-text span:nth-child(4) { animation-delay: -0.6s; }
+        .animated-text span:nth-child(5) { animation-delay: -0.8s; }
+        .animated-text span:nth-child(6) { animation-delay: -1.0s; }
+
+        /* Estilos para la frase */
+        .subtitle-text {
+            margin-top: -1rem; /* Ajuste para acercar el texto al nombre */
+            display: inline-block;
+        }
+
+        .subtitle-text span {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: clamp(1rem, 4vw, 2rem);
+            color: rgba(255, 255, 255, 0.85);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+            position: relative;
+            display: inline-block;
+            animation: glowEffect 2.5s ease-in-out infinite;
+        }
+
+        @keyframes glowEffect {
+            0%, 100% {
+                text-shadow: 
+                    0 0 5px #fff,
+                    0 0 10px #fff,
+                    0 0 15px #0073e6;
+            }
+            50% {
+                text-shadow: 
+                    0 0 10px #fff,
+                    0 0 20px #0099ff,
+                    0 0 30px #0099ff;
+            }
+        }
+
+        /* Retraso de animación para cada letra de la frase */
+        .subtitle-text span:nth-child(1) { animation-delay: 0s; }
+        .subtitle-text span:nth-child(2) { animation-delay: 0.05s; }
+        .subtitle-text span:nth-child(3) { animation-delay: 0.1s; }
+        .subtitle-text span:nth-child(4) { animation-delay: 0.15s; }
+        .subtitle-text span:nth-child(5) { animation-delay: 0.2s; }
+        .subtitle-text span:nth-child(6) { animation-delay: 0.25s; }
+        .subtitle-text span:nth-child(7) { animation-delay: 0.3s; }
+        .subtitle-text span:nth-child(8) { animation-delay: 0.35s; }
+        .subtitle-text span:nth-child(9) { animation-delay: 0.4s; }
+        .subtitle-text span:nth-child(10) { animation-delay: 0.45s; }
+        .subtitle-text span:nth-child(11) { animation-delay: 0.5s; }
+        .subtitle-text span:nth-child(12) { animation-delay: 0.55s; }
+        .subtitle-text span:nth-child(13) { animation-delay: 0.6s; }
+        .subtitle-text span:nth-child(14) { animation-delay: 0.65s; }
+        .subtitle-text span:nth-child(15) { animation-delay: 0.7s; }
+        .subtitle-text span:nth-child(16) { animation-delay: 0.75s; }
+        .subtitle-text span:nth-child(17) { animation-delay: 0.8s; }
+        .subtitle-text span:nth-child(18) { animation-delay: 0.85s; }
+        .subtitle-text span:nth-child(19) { animation-delay: 0.9s; }
+        .subtitle-text span:nth-child(20) { animation-delay: 0.95s; }
+        .subtitle-text span:nth-child(21) { animation-delay: 1.0s; }
+        .subtitle-text span:nth-child(22) { animation-delay: 1.05s; }
+        .subtitle-text span:nth-child(23) { animation-delay: 1.1s; }
+        .subtitle-text span:nth-child(24) { animation-delay: 1.15s; }
+        .subtitle-text span:nth-child(25) { animation-delay: 1.2s; }
+        .subtitle-text span:nth-child(26) { animation-delay: 1.25s; }
+        .subtitle-text span:nth-child(27) { animation-delay: 1.3s; }
+        .subtitle-text span:nth-child(28) { animation-delay: 1.35s; }
+        .subtitle-text span:nth-child(29) { animation-delay: 1.4s; }
+        .subtitle-text span:nth-child(30) { animation-delay: 1.45s; }
+        .subtitle-text span:nth-child(31) { animation-delay: 1.5s; }
+        .subtitle-text span:nth-child(32) { animation-delay: 1.55s; }
+        .subtitle-text span:nth-child(33) { animation-delay: 1.6s; }
+        .subtitle-text span:nth-child(34) { animation-delay: 1.65s; }
+
+    </style>
+</head>
+<body>
+    <!-- Contenedor para el fondo de estrellas -->
+    <div id="stars-background"></div>
+    <!-- Contenedor para el efecto de lluvia -->
+    <div id="symbols-rain"></div>
+
+    <div class="content-container">
+        <!-- Cada letra en un span para animarla individualmente -->
+        <div class="animated-text">
+            <span>D</span>
+            <span>o</span>
+            <span>r</span>
+            <span>i</span>
+            <span>a</span>
+            <span>n</span>
+        </div>
+        <!-- Contenedor de la frase con efecto de ola -->
+        <div class="subtitle-text">
+            <span>w</span><span>i</span><span>t</span><span>a</span><span>j</span><span>c</span><span>i</span><span>e</span><span>&nbsp;</span><span>w</span><span>&nbsp;</span><span>m</span><span>o</span><span>j</span><span>e</span><span>j</span><span>&nbsp;</span><span>p</span><span>r</span><span>z</span><span>e</span><span>s</span><span>t</span><span>r</span><span>z</span><span>e</span><span>n</span><span>i</span><span>&nbsp;</span><span>n</span><span>a</span><span>&nbsp;</span><span>x</span><span>a</span><span>t</span>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Generador de estrellas
+            const starsContainer = document.getElementById('stars-background');
+            const numberOfStars = 150;
+
+            for (let i = 0; i < numberOfStars; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                const size = Math.random() * 3 + 1; // Tamaño entre 1px y 4px
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.left = `${Math.random() * 100}%`;
+                
+                const delay = Math.random() * 5;
+                star.style.animationDelay = `${delay}s`;
+
+                starsContainer.appendChild(star);
+            }
+            
+            // Generador de lluvia de elementos
+            const rainContainer = document.getElementById('symbols-rain');
+            const numberOfElements = 30; // Cantidad de números lloviendo
+
+            for (let i = 0; i < numberOfElements; i++) {
+                const el = document.createElement('span');
+                el.classList.add('symbol');
+
+                const delay = Math.random() * 12; 
+                
+                // Configuración solo para los números con el nuevo efecto
+                el.textContent = '1469886948';
+                el.style.fontSize = `${Math.random() * 1 + 0.5}em`;
+                const duration = Math.random() * 8 + 7;
+                el.style.animation = `zoomAndFall ${duration}s linear ${delay}s infinite`;
+
+                // Posición horizontal aleatoria
+                el.style.left = `${Math.random() * 100}%`;
+                
+                rainContainer.appendChild(el);
+            }
+        });
+    </script>
+</body>
+</html>
+

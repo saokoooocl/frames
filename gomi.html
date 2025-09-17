@@ -6,7 +6,7 @@
     <title>GOMI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Dancing+Script:wght@700&family=Lobster&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Dancing+Script:wght@700&family=Bangers&display=swap" rel="stylesheet">
     <style>
         /* Estilos generales y de fondo */
         body {
@@ -82,18 +82,17 @@
         
         /* Estilo del texto "GOMI" */
         h1 {
-            font-family: 'Fredoka One', cursive;
-            font-size: clamp(6rem, 28vw, 18rem);
-            color: #fce4ec; /* Light pink color */
+            font-family: 'Bangers', cursive; /* Nueva fuente estilo comic */
+            font-size: clamp(6rem, 30vw, 20rem); /* Ajuste de tamaño */
             text-transform: uppercase;
             margin: 0;
-            text-shadow:
-                -1px -1px 1px #fff,
-                -2px -2px 1px #fff,
-                -3px -3px 1px #f48fb1,
-                -4px -4px 1px #f06292,
-                -5px -5px 10px rgba(0, 0, 0, 0.4); /* Main shadow for depth */
-            animation: wobble 3s ease-in-out infinite;
+            background: linear-gradient(45deg, #ff80ab, #f48fb1, #ec407a, #f06292, #ff80ab);
+            background-size: 200% auto;
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            -webkit-text-stroke: 3px #fff; /* Borde blanco para legibilidad */
+            animation: wobble 3s ease-in-out infinite, gradientMove 5s ease infinite alternate;
         }
 
         /* Estilo para la cita */
@@ -134,6 +133,16 @@
             0%, 100% { transform: scale(1); }
             25% { transform: scale(1.02) rotate(-1deg); }
             75% { transform: scale(0.98) rotate(1deg); }
+        }
+
+        /* Animación del gradiente */
+        @keyframes gradientMove {
+            from {
+                background-position: 0% 50%;
+            }
+            to {
+                background-position: 100% 50%;
+            }
         }
 
         /* Contenedor para los elementos que caen */
@@ -227,8 +236,8 @@
             // --- Efecto de máquina de escribir ---
             const typewriterElement = document.getElementById('typewriter-text');
             const lines = [
-                "Soy la tentación que estabas esperando.",
-                "Una vez que me pruebas, siempre quieres más."
+                "Mi dulzura es solo el comienzo.",
+                "Mi travesura no tiene fin."
             ];
             const fullText = lines.join('<br>');
             let charIndex = 0;

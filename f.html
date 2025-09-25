@@ -42,8 +42,9 @@
 
         let confettiPieces = [];
         let fallingTexts = [];
-        const numberOfPieces = 150; 
-        const numberOfTexts = 30; // Un poco más de frases
+        // Se han reducido los valores para mejorar el rendimiento y evitar el "lag"
+        const numberOfPieces = 100; 
+        const numberOfTexts = 20; // Menos frases para una animación más fluida
         // Paleta de colores más estética con dorados, plateados y pasteles
         const colors = ['#FFD700', '#C0C0C0', '#FFB6C1', '#E6E6FA', '#DDA0DD', '#F08080', '#FFC0CB'];
 
@@ -155,4 +156,5 @@
     </script>
 </body>
 </html>
+
 

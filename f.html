@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>¡Feliz Cumpleaños DJ Demente!</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Se importa la nueva fuente "Great Vibes" para un estilo más elegante -->
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    <!-- Se mantiene la fuente "Black Ops One", con un estilo stencil más urbano y genial -->
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap" rel="stylesheet">
     <style>
         /* Se establece el fondo como transparente para que pueda adaptarse */
         html, body {
@@ -29,8 +29,8 @@
     <canvas id="birthday-canvas"></canvas>
 
     <script>
-        // Carga la fuente antes de iniciar la animación para evitar parpadeos
-        document.fonts.load('10px "Great Vibes"').then(() => {
+        // Carga la nueva fuente antes de iniciar la animación
+        document.fonts.load('10px "Black Ops One"').then(() => {
             initializeAnimations();
             animate();
         });
@@ -45,8 +45,8 @@
         // Se han reducido los valores para mejorar el rendimiento y evitar el "lag"
         const numberOfPieces = 100; 
         const numberOfTexts = 20; // Menos frases para una animación más fluida
-        // Paleta de colores más estética con dorados, plateados y pasteles
-        const colors = ['#FFD700', '#C0C0C0', '#FFB6C1', '#E6E6FA', '#DDA0DD', '#F08080', '#FFC0CB'];
+        // Nueva paleta de colores con los colores de la bandera de Panamá
+        const colors = ['#D21034', '#FFFFFF', '#005293'];
 
         // Clase para el confeti (serpentina)
         class Confetti {
@@ -83,16 +83,15 @@
         
         // Clase para las frases que caen
         class FallingText {
-            constructor(x, y) {
+            constructor(x, y, text) {
                 this.x = x;
                 this.y = y;
-                this.text = "Feliz Cumpleaños DJ Demente";
+                this.text = text; // Acepta el texto a mostrar
                 this.speedX = Math.random() * 2 - 1;
-                this.speedY = Math.random() * 2 + 1;
-                // Se aumenta el tamaño de la fuente para que sea más visible y estético
-                this.fontSize = Math.random() * 20 + 25; // Tamaño entre 25 y 45
+                this.speedY = Math.random() * 1.5 + 0.8;
+                this.fontSize = Math.random() * 25 + 30; // Tamaño entre 30 y 55
                 this.color = colors[Math.floor(Math.random() * colors.length)];
-                this.angle = (Math.random() - 0.5) * 20;
+                this.angle = (Math.random() - 0.5) * 10;
             }
 
             update() {
@@ -108,14 +107,17 @@
                 ctx.save();
                 ctx.translate(this.x, this.y);
                 ctx.rotate(this.angle * Math.PI / 180);
-                // Se usa la nueva fuente "Great Vibes"
-                ctx.font = `${this.fontSize}px "Great Vibes"`;
+                ctx.font = `${this.fontSize}px "Black Ops One"`;
                 ctx.fillStyle = this.color;
-                // Se mejora la sombra para dar más profundidad y legibilidad a las letras
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-                ctx.shadowBlur = 5;
-                ctx.shadowOffsetX = 2;
-                ctx.shadowOffsetY = 2;
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.5)'; // Sombra negra para contraste en letras blancas
+                if(this.color === '#FFFFFF') {
+                    ctx.shadowBlur = 5;
+                } else {
+                    ctx.shadowColor = 'rgba(255, 255, 255, 0.7)';
+                    ctx.shadowBlur = 8;
+                }
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 0;
                 ctx.textAlign = "center";
                 ctx.fillText(this.text, 0, 0);
                 ctx.restore();
@@ -126,11 +128,14 @@
         function initializeAnimations() {
             confettiPieces = [];
             fallingTexts = [];
+            const textsToFall = ["DJ Demente", "El Tallador"];
+
             for (let i = 0; i < numberOfPieces; i++) {
                 confettiPieces.push(new Confetti(Math.random() * canvas.width, Math.random() * canvas.height - canvas.height, colors[Math.floor(Math.random() * colors.length)]));
             }
             for (let i = 0; i < numberOfTexts; i++) {
-                fallingTexts.push(new FallingText(Math.random() * canvas.width, Math.random() * canvas.height - canvas.height));
+                const textContent = textsToFall[i % textsToFall.length]; // Alterna entre los textos
+                fallingTexts.push(new FallingText(Math.random() * canvas.width, Math.random() * canvas.height - canvas.height, textContent));
             }
         }
 
@@ -156,5 +161,4 @@
     </script>
 </body>
 </html>
-
 

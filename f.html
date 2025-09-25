@@ -5,15 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>¡Feliz Cumpleaños DJ Demente!</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <!-- Se importa la nueva fuente "Great Vibes" para un estilo más elegante -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
+        /* Se establece el fondo como transparente para que pueda adaptarse */
+        html, body {
             overflow: hidden; /* Evita el scroll causado por el canvas */
-            background-image: url('https://xatimg.com/image/OLujaXDW5d4s.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+            background-color: transparent;
         }
         #birthday-canvas {
             position: absolute;
@@ -31,6 +29,12 @@
     <canvas id="birthday-canvas"></canvas>
 
     <script>
+        // Carga la fuente antes de iniciar la animación para evitar parpadeos
+        document.fonts.load('10px "Great Vibes"').then(() => {
+            initializeAnimations();
+            animate();
+        });
+
         const canvas = document.getElementById('birthday-canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
@@ -38,9 +42,10 @@
 
         let confettiPieces = [];
         let fallingTexts = [];
-        const numberOfPieces = 150; // Menos confeti para que se lean las frases
-        const numberOfTexts = 25;
-        const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4caf50', '#ffeb3b', '#ffc107', '#ff9800'];
+        const numberOfPieces = 150; 
+        const numberOfTexts = 30; // Un poco más de frases
+        // Paleta de colores más estética con dorados, plateados y pasteles
+        const colors = ['#FFD700', '#C0C0C0', '#FFB6C1', '#E6E6FA', '#DDA0DD', '#F08080', '#FFC0CB'];
 
         // Clase para el confeti (serpentina)
         class Confetti {
@@ -82,10 +87,11 @@
                 this.y = y;
                 this.text = "Feliz Cumpleaños DJ Demente";
                 this.speedX = Math.random() * 2 - 1;
-                this.speedY = Math.random() * 2 + 1.5;
-                this.fontSize = Math.random() * 15 + 15; // Tamaño de letra entre 15 y 30
+                this.speedY = Math.random() * 2 + 1;
+                // Se aumenta el tamaño de la fuente para que sea más visible y estético
+                this.fontSize = Math.random() * 20 + 25; // Tamaño entre 25 y 45
                 this.color = colors[Math.floor(Math.random() * colors.length)];
-                this.angle = (Math.random() - 0.5) * 25;
+                this.angle = (Math.random() - 0.5) * 20;
             }
 
             update() {
@@ -101,10 +107,14 @@
                 ctx.save();
                 ctx.translate(this.x, this.y);
                 ctx.rotate(this.angle * Math.PI / 180);
-                ctx.font = `700 ${this.fontSize}px Poppins`;
+                // Se usa la nueva fuente "Great Vibes"
+                ctx.font = `${this.fontSize}px "Great Vibes"`;
                 ctx.fillStyle = this.color;
-                ctx.shadowColor = 'black';
-                ctx.shadowBlur = 4;
+                // Se mejora la sombra para dar más profundidad y legibilidad a las letras
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+                ctx.shadowBlur = 5;
+                ctx.shadowOffsetX = 2;
+                ctx.shadowOffsetY = 2;
                 ctx.textAlign = "center";
                 ctx.fillText(this.text, 0, 0);
                 ctx.restore();
@@ -142,8 +152,6 @@
             initializeAnimations();
         });
 
-        initializeAnimations();
-        animate();
     </script>
 </body>
 </html>

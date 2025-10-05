@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Faith</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            overflow: hidden;
+        }
+        
+        #butterfly-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 1;
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+        
+        .online-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 12px;
+            height: 12px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            border: 2px solid black;
+        }
+
+        @keyframes pulse-icon {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .sidebar-nav {
+            background: linear-gradient(170deg, #4a5568, #2d3748, #1a202c, #2d3748, #4a5568);
+            background-size: 200% 200%;
+            animation: animated-gray-gradient 15s ease infinite;
+        }
+
+        @keyframes animated-gray-gradient {
+            0%{background-position:0% 50%}
+            50%{background-position:100% 50%}
+            100%{background-position:0% 50%}
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            border-radius: 9999px;
+            border: 2px solid white;
+            background-color: #a16270;
+            transition: background-color 0.3s;
+            animation: pulse-icon 2.5s infinite ease-in-out;
+        }
+
+        .sidebar-nav a:hover {
+            background-color: #b97c8a;
+        }
+        
+        .sidebar-nav a:nth-child(2) { animation-delay: 0.3s; }
+        .sidebar-nav a:nth-child(3) { animation-delay: 0.6s; }
+        .sidebar-nav a:nth-child(4) { animation-delay: 0.9s; }
+
+        @keyframes wave {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .wave-text span {
+            display: inline-block;
+            animation: wave 2s infinite ease-in-out;
+        }
+        
+        @keyframes dimensional-pan {
+            0% { transform: scale(1.1) translate(0, 0) rotate(0deg); }
+            50% { transform: scale(1.15) translate(2%, -2%) rotate(1deg); }
+            100% { transform: scale(1.1) translate(0, 0) rotate(0deg); }
+        }
+
+        .dimensional-bg {
+            animation: dimensional-pan 20s infinite alternate ease-in-out;
+        }
+        
+        #quote {
+            font-family: 'Roboto', sans-serif;
+            font-style: italic;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeInSlideUp 1.5s ease-out forwards;
+            animation-delay: 0.5s;
+        }
+
+        @keyframes fadeInSlideUp { to { opacity: 1; transform: translateY(0); } }
+
+        .admin-input {
+            background-color: #333;
+            border: 1px solid #555;
+            color: white;
+            border-radius: 0.375rem;
+            padding: 0.5rem 0.75rem;
+            width: 100%;
+        }
+         .admin-button {
+            background-color: #a16270;
+            color: white;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.3s;
+        }
+        .admin-button:hover {
+            background-color: #b97c8a;
+        }
+        
+        .admin-tab {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            color: #a0aec0;
+        }
+        .admin-tab.active {
+            color: #ffffff;
+            border-bottom-color: #a16270;
+        }
+
+        #custom-notification {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        #modals-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden; 
+            pointer-events: none;
+            transition: opacity 0.3s ease-in-out, visibility 0s linear 0.3s;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        .modal-content {
+            background-color: #1a1a1a;
+            border: 2px solid #a16270;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            position: relative;
+            max-width: 380px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            transform: scale(0.95);
+            opacity: 0;
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+    </style>
+</head>
+<body class="bg-zinc-900 flex items-center justify-center min-h-screen p-4">
+
+    <canvas id="butterfly-canvas"></canvas>
+
+    <div id="custom-notification" class="fixed top-4 right-4 text-white px-4 py-3 rounded-lg shadow-lg hidden z-50 transition-all duration-300 transform translate-x-full"></div>
+
+    <div class="main-container w-full max-w-md bg-black shadow-2xl flex" style="height: 550px;">
+            
+        <nav class="sidebar-nav w-16 flex-shrink-0 flex flex-col items-center justify-center space-y-3 p-2">
+            <a href="#" id="home-button"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></a>
+            <a href="#" id="heart-button"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg></a>
+            <a href="#" id="friends-button"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></a>
+            <a href="#" id="admin-button-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 0 2l-.15.08a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1 0-2l.15-.08a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg></a>
+        </nav>
+
+        <main class="flex-1 flex flex-col relative overflow-hidden">
+            <div id="main-background" class="dimensional-bg absolute inset-0 bg-cover bg-center" style="background-image: url('https://i.ibb.co/DCwG9Xn/image-3a856a.png');"></div>
+            <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+
+            <div id="main-content" class="relative z-10 flex flex-col h-full p-3 pt-8">
+                <div id="profile-view" class="flex-1 flex flex-col items-center justify-center text-center">
+                    <div class="relative w-20 h-20 mb-2 flex-shrink-0">
+                        <img id="profile-pic" src="https://i.ibb.co/DCwG9Xn/image-3a856a.png" alt="Foto de perfil" class="w-full h-full rounded-full border-2 border-white object-cover shadow-lg" onerror="this.onerror=null;this.src='https://placehold.co/80x80/1e1b2e/ffffff?text=Error';">
+                        <div class="online-badge"></div>
+                    </div>
+                    <h1 class="wave-text text-2xl font-bold text-white tracking-wider"><span>𝐅</span><span style="animation-delay: 0.1s;">𝐚</span><span style="animation-delay: 0.2s;">𝐢</span><span style="animation-delay: 0.3s;">𝐭</span><span style="animation-delay: 0.4s;">𝐡</span></h1>
+                    <div class="my-2 max-w-[280px] h-20 flex items-center justify-center"><p id="quote" class="text-white text-center">Cargando descripción...</p></div>
+                    
+                    <div id="youtube-player-container" class="relative w-full max-w-[320px] aspect-video rounded-lg overflow-hidden mt-4 shadow-xl">
+                        <iframe id="youtube-iframe" class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/z21NNvQ4Qjs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <div id="modals-container">
+        <div id="heart-modal" class="modal-overlay">
+            <div class="modal-content">
+                <button id="close-heart-modal" class="absolute top-2 right-2 text-white hover:text-gray-300"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                <div id="heart-content">
+                    <div class="relative w-24 h-24 mb-4 mx-auto p-1 rounded-full" style="background: linear-gradient(to bottom, #a16270, #5c3b42);"><img src="https://placehold.co/96x96/1e1b2e/ffffff?text=... " alt="Foto" class="w-full h-full rounded-full object-cover border-2 border-zinc-900"></div>
+                    <h2 class="text-xl font-bold text-white">Cargando...</h2>
+                    <p class="text-gray-400 text-sm mb-4"></p>
+                    <p class="text-white text-sm mb-6"></p>
+                    <a href="#" class="bg-[#a16270] text-white text-sm font-bold py-2 px-6 rounded-full hover:bg-[#b97c8a] transition">XAT.ME</a>
+                </div>
+            </div>
+        </div>
+
+        <div id="friends-modal" class="modal-overlay">
+            <div class="modal-content">
+                <button id="close-friends-modal" class="absolute top-2 right-2 text-white hover:text-gray-300"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                <h2 class="text-xl font-bold text-white mb-4">Amigos</h2>
+                <ul id="friends-list-container" class="space-y-2 mt-4"></ul>
+            </div>
+        </div>
+
+        <div id="login-modal" class="modal-overlay">
+            <div class="modal-content">
+                <button id="close-login-modal" type="button" class="absolute top-2 right-2 text-white hover:text-gray-300"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                <h2 class="text-xl font-bold text-white mb-4">Admin Login</h2>
+                <form id="login-form" class="space-y-4">
+                    <input id="username" type="text" placeholder="Usuario" class="admin-input" required>
+                    <input id="password" type="password" placeholder="Contraseña" class="admin-input" required>
+                    <button type="submit" class="admin-button w-full">Entrar</button>
+                    <p id="login-error" class="text-red-500 text-sm hidden">Credenciales incorrectas.</p>
+                </form>
+            </div>
+        </div>
+
+        <div id="admin-panel" class="modal-overlay">
+            <div class="modal-content max-w-md">
+                <button id="close-admin-panel" class="absolute top-2 right-2 text-white hover:text-gray-300"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                <h2 class="text-xl font-bold text-white mb-4">Panel de Administración</h2>
+                <div class="border-b border-gray-700 mb-4">
+                    <nav class="flex space-x-2" id="admin-tabs">
+                        <button data-tab="descripcion" class="admin-tab active">Descripción</button>
+                        <button data-tab="corazon" class="admin-tab">Corazón</button>
+                        <button data-tab="amigos" class="admin-tab">Amigos</button>
+                        <button data-tab="video" class="admin-tab">Video</button>
+                        <button data-tab="fotos" class="admin-tab">Fotos</button>
+                    </nav>
+                </div>
+                <div id="admin-tab-content">
+                    <div id="tab-descripcion">
+                        <form id="quote-form" class="space-y-3">
+                            <h3 class="font-semibold text-white">Descripción Principal</h3>
+                            <textarea id="quote-text" placeholder="Frase descriptiva" class="admin-input" rows="3" required></textarea>
+                            <button type="submit" class="admin-button">Guardar Descripción</button>
+                        </form>
+                    </div>
+                    <div id="tab-corazon" class="hidden">
+                        <form id="esposo-form" class="space-y-3">
+                            <h3 class="font-semibold text-white">Sección Corazón</h3>
+                            <input type="text" id="esposo-nombre" placeholder="Nombre" class="admin-input" required>
+                            <input type="text" id="esposo-id" placeholder="ID Xat" class="admin-input" required>
+                            <input type="url" id="esposo-foto" placeholder="URL de la Foto" class="admin-input" required>
+                            <input type="url" id="esposo-link" placeholder="URL Xat.me" class="admin-input" required>
+                            <textarea id="esposo-frase" placeholder="Frase" class="admin-input" rows="2" required></textarea>
+                            <button type="submit" class="admin-button">Guardar Cambios</button>
+                        </form>
+                    </div>
+                    <div id="tab-amigos" class="hidden">
+                        <form id="friend-form" class="space-y-3 mb-4">
+                            <h3 class="font-semibold text-white">Añadir Amigo</h3>
+                            <input type="text" id="friend-nombre" placeholder="Nombre" class="admin-input" required>
+                            <input type="text" id="friend-id" placeholder="ID Xat" class="admin-input" required>
+                            <input type="url" id="friend-foto" placeholder="URL de la Foto" class="admin-input" required>
+                            <input type="url" id="friend-link" placeholder="URL Xat.me" class="admin-input" required>
+                            <button type="submit" class="admin-button">Añadir Amigo</button>
+                        </form>
+                        <div id="admin-friends-list">
+                            <h3 class="font-semibold text-white border-b border-gray-600 pb-1 mb-2">Lista de Amigos</h3>
+                            <ul id="admin-friends-container" class="space-y-2 max-h-40 overflow-y-auto"></ul>
+                        </div>
+                    </div>
+                    <div id="tab-video" class="hidden">
+                        <form id="video-form" class="space-y-3">
+                            <h3 class="font-semibold text-white">Video de YouTube</h3>
+                            <input type="url" id="video-url" placeholder="URL del video de YouTube" class="admin-input" required>
+                            <button type="submit" class="admin-button">Guardar Video</button>
+                        </form>
+                    </div>
+                    <div id="tab-fotos" class="hidden">
+                        <form id="photo-form" class="space-y-3">
+                            <h3 class="font-semibold text-white">Fotos del Perfil</h3>
+                            <input type="url" id="photo-url" placeholder="URL de la foto (perfil y fondo)" class="admin-input" required>
+                            <button type="submit" class="admin-button">Guardar Fotos</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, doc, setDoc, collection, addDoc, onSnapshot, deleteDoc as firestoreDeleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+      
+        const firebaseConfig = {
+            apiKey: "AIzaSyAoRKxUkAqeZy4Cgmry2x_5AzGBbde6kIE",
+            authDomain: "stream-b81ba.firebaseapp.com",
+            projectId: "stream-b81ba",
+            storageBucket: "stream-b81ba.appspot.com",
+            messagingSenderId: "77635617548",
+            appId: "1:77635617548:web:750a282f11c41ed568ff29"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        signInAnonymously(auth).catch((error) => console.error("Anonymous sign-in failed:", error));
+
+        const profileId = "faith_profile";
+
+        const ui = {
+            homeButton: document.getElementById('home-button'),
+            friendsButton: document.getElementById('friends-button'),
+            heartButton: document.getElementById('heart-button'),
+            adminButtonIcon: document.getElementById('admin-button-icon'),
+            heartModal: document.getElementById('heart-modal'),
+            friendsModal: document.getElementById('friends-modal'),
+            loginModal: document.getElementById('login-modal'),
+            adminPanel: document.getElementById('admin-panel'),
+            closeHeartModal: document.getElementById('close-heart-modal'),
+            closeFriendsModal: document.getElementById('close-friends-modal'),
+            closeLoginModal: document.getElementById('close-login-modal'),
+            closeAdminPanel: document.getElementById('close-admin-panel'),
+            friendsListContainer: document.getElementById('friends-list-container'),
+            heartContent: document.getElementById('heart-content'),
+            loginForm: document.getElementById('login-form'),
+            loginError: document.getElementById('login-error'),
+            quote: document.getElementById('quote'),
+            quoteForm: document.getElementById('quote-form'),
+            esposoForm: document.getElementById('esposo-form'),
+            friendForm: document.getElementById('friend-form'),
+            videoForm: document.getElementById('video-form'),
+            photoForm: document.getElementById('photo-form'),
+            adminFriendsContainer: document.getElementById('admin-friends-container'),
+            adminTabs: document.getElementById('admin-tabs'),
+            adminTabContent: document.getElementById('admin-tab-content'),
+            customNotification: document.getElementById('custom-notification'),
+            youtubeIframe: document.getElementById('youtube-iframe'),
+            profilePic: document.getElementById('profile-pic'),
+            mainBackground: document.getElementById('main-background')
+        };
+        
+        function showCustomNotification(message, type = 'success') {
+            const notification = ui.customNotification;
+            notification.textContent = message;
+            notification.classList.remove('hidden', 'bg-green-600', 'bg-red-600', 'bg-blue-600', 'translate-x-full');
+            notification.classList.add('flex', 'translate-x-0');
+            if (type === 'success') notification.classList.add('bg-green-600');
+            else if (type === 'error') notification.classList.add('bg-red-600');
+            else notification.classList.add('bg-blue-600');
+            setTimeout(() => {
+                notification.classList.remove('translate-x-0');
+                notification.classList.add('translate-x-full');
+            }, 3000);
+        }
+
+        function showFloatingModal(modalElement) {
+            modalElement.classList.add('active');
+        }
+
+        function hideFloatingModal(modalElement) {
+            modalElement.classList.remove('active');
+        }
+
+        function hideAllFloatingModals() {
+            document.querySelectorAll('.modal-overlay').forEach(modal => hideFloatingModal(modal));
+        }
+
+        ui.homeButton.addEventListener('click', (e) => { e.preventDefault(); hideAllFloatingModals(); });
+        ui.heartButton.addEventListener('click', (e) => { e.preventDefault(); hideAllFloatingModals(); showFloatingModal(ui.heartModal); });
+        ui.friendsButton.addEventListener('click', (e) => { e.preventDefault(); hideAllFloatingModals(); showFloatingModal(ui.friendsModal); });
+        ui.adminButtonIcon.addEventListener('click', (e) => { e.preventDefault(); hideAllFloatingModals(); showFloatingModal(ui.loginModal); });
+
+        ui.closeHeartModal.addEventListener('click', (e) => { e.preventDefault(); hideFloatingModal(ui.heartModal); });
+        ui.closeFriendsModal.addEventListener('click', (e) => { e.preventDefault(); hideFloatingModal(ui.friendsModal); });
+        ui.closeLoginModal.addEventListener('click', (e) => { e.preventDefault(); hideFloatingModal(ui.loginModal); });
+        ui.closeAdminPanel.addEventListener('click', (e) => { e.preventDefault(); hideFloatingModal(ui.adminPanel); });
+
+        ui.loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            if (user === 'admin' && pass === 'fait2025') {
+                hideFloatingModal(ui.loginModal);
+                showFloatingModal(ui.adminPanel);
+                ui.loginError.classList.add('hidden');
+                ui.loginForm.reset();
+            } else { 
+                ui.loginError.classList.remove('hidden');
+                showCustomNotification('Credenciales incorrectas.', 'error');
+            }
+        });
+
+        ui.adminTabs.addEventListener('click', (e) => {
+            if (e.target.matches('.admin-tab')) {
+                const tabName = e.target.dataset.tab;
+                ui.adminTabs.querySelectorAll('.admin-tab').forEach(tab => tab.classList.remove('active'));
+                e.target.classList.add('active');
+                ui.adminTabContent.querySelectorAll(':scope > div').forEach(content => {
+                    content.id === `tab-${tabName}` ? content.classList.remove('hidden') : content.classList.add('hidden');
+                });
+            }
+        });
+        
+        function getYoutubeVideoId(url) {
+            if (!url) return null;
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        const renderConfig = (data) => {
+            const defaultQuote = "Somos como líneas paralelas, destinadas a recorrer el mismo camino, pero jamás a encontrarse.";
+            const defaultVideoId = 'z21NNvQ4Qjs';
+            const defaultPhotoUrl = 'https://i.ibb.co/DCwG9Xn/image-3a856a.png';
+
+            ui.quote.textContent = data.text || defaultQuote;
+            document.getElementById('quote-text').value = data.text || defaultQuote;
+            
+            const videoUrl = data.videoUrl || '';
+            document.getElementById('video-url').value = videoUrl;
+            const videoId = getYoutubeVideoId(videoUrl) || defaultVideoId;
+            if (ui.youtubeIframe.src !== `https://www.youtube.com/embed/${videoId}`) {
+                ui.youtubeIframe.src = `https://www.youtube.com/embed/${videoId}`;
+            }
+
+            const photoUrl = data.photoUrl || defaultPhotoUrl;
+            document.getElementById('photo-url').value = photoUrl;
+            if (ui.profilePic.src !== photoUrl) {
+                ui.profilePic.src = photoUrl;
+            }
+            if (ui.mainBackground.style.backgroundImage !== `url("${photoUrl}")`) {
+                ui.mainBackground.style.backgroundImage = `url("${photoUrl}")`;
+            }
+        };
+
+        const renderFriends = (friends) => {
+            ui.friendsListContainer.innerHTML = '';
+            ui.adminFriendsContainer.innerHTML = '';
+            if (friends.length === 0) {
+                 ui.friendsListContainer.innerHTML = `<p class="text-center text-gray-400">No hay amigos para mostrar.</p>`;
+                 return;
+            }
+            friends.forEach(friend => {
+                const li = document.createElement('li');
+                li.className = 'flex items-center bg-zinc-800/90 p-2 rounded-md space-x-3';
+                li.innerHTML = `<img src="${friend.foto || 'https://placehold.co/40x40/71717a/ffffff?text=?'}" class="w-10 h-10 rounded-full object-cover border-2 border-gray-500 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/40x40/71717a/ffffff?text=?';"><div class="flex-1 min-w-0"><p class="text-white font-semibold text-sm truncate">${friend.nombre}</p><p class="text-gray-400 text-xs">${friend.id_xat}</p></div><a href="${friend.xat_link || '#'}" target="_blank" rel="noopener noreferrer" class="bg-[#a16270] text-white text-xs font-bold py-1 px-3 rounded-full hover:bg-[#b97c8a] transition flex-shrink-0">XAT.ME</a>`;
+                ui.friendsListContainer.appendChild(li);
+
+                const adminLi = document.createElement('li');
+                adminLi.className = 'flex items-center justify-between bg-zinc-800 p-2 rounded';
+                adminLi.innerHTML = `<p class="text-white text-sm">${friend.nombre}</p>`;
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = 'Eliminar';
+                deleteBtn.className = 'text-red-500 hover:text-red-400 text-xs font-bold';
+                deleteBtn.onclick = () => deleteFriend(friend.docId);
+                adminLi.appendChild(deleteBtn);
+                ui.adminFriendsContainer.appendChild(adminLi);
+            });
+        };
+
+        const renderEsposo = (data) => {
+            if (!data) return;
+            ui.heartContent.querySelector('img').src = data.foto || 'https://placehold.co/96x96/1e1b2e/ffffff?text=Error';
+            ui.heartContent.querySelector('h2').textContent = data.nombre || 'Cargando...';
+            ui.heartContent.querySelectorAll('p')[0].textContent = data.id_xat || '';
+            ui.heartContent.querySelectorAll('p')[1].textContent = data.frase || '';
+            ui.heartContent.querySelector('a').href = data.xat_link || '#';
+
+            document.getElementById('esposo-nombre').value = data.nombre || '';
+            document.getElementById('esposo-id').value = data.id_xat || '';
+            document.getElementById('esposo-foto').value = data.foto || '';
+            document.getElementById('esposo-link').value = data.xat_link || '';
+            document.getElementById('esposo-frase').value = data.frase || '';
+        };
+
+        const configRef = doc(db, 'profiles', profileId, 'config', 'data');
+        const esposoRef = doc(db, 'profiles', profileId, 'esposo', 'data');
+        const friendsRef = collection(db, 'profiles', profileId, 'friends');
+
+        onSnapshot(configRef, (docSnap) => renderConfig(docSnap.exists() ? docSnap.data() : {}));
+        onSnapshot(esposoRef, (docSnap) => docSnap.exists() ? renderEsposo(docSnap.data()) : console.log("No spouse data found!"));
+        onSnapshot(friendsRef, (snapshot) => renderFriends(snapshot.docs.map(doc => ({ ...doc.data(), docId: doc.id }))));
+
+        async function saveData(ref, data, successMsg, errorMsg) {
+            try { await setDoc(ref, data, { merge: true }); showCustomNotification(successMsg, 'success'); } 
+            catch (error) { console.error(errorMsg, error); showCustomNotification(`Error: ${error.message}`, 'error'); }
+        }
+
+        ui.quoteForm.addEventListener('submit', (e) => { e.preventDefault(); saveData(configRef, { text: document.getElementById('quote-text').value }, 'Descripción actualizada!', 'Error al actualizar descripción:'); });
+        ui.esposoForm.addEventListener('submit', (e) => { e.preventDefault(); saveData(esposoRef, { nombre: document.getElementById('esposo-nombre').value, id_xat: document.getElementById('esposo-id').value, foto: document.getElementById('esposo-foto').value, xat_link: document.getElementById('esposo-link').value, frase: document.getElementById('esposo-frase').value }, 'Datos del corazón actualizados!', 'Error al actualizar datos del corazón:'); });
+        ui.videoForm.addEventListener('submit', (e) => { e.preventDefault(); saveData(configRef, { videoUrl: document.getElementById('video-url').value }, 'Video actualizado!', 'Error al actualizar video:')});
+        ui.photoForm.addEventListener('submit', (e) => { e.preventDefault(); saveData(configRef, { photoUrl: document.getElementById('photo-url').value }, 'Fotos actualizadas!', 'Error al actualizar fotos:')});
+
+        ui.friendForm.addEventListener('submit', async (e) => { 
+            e.preventDefault(); 
+            try { 
+                await addDoc(friendsRef, { 
+                    nombre: document.getElementById('friend-nombre').value, 
+                    id_xat: document.getElementById('friend-id').value, 
+                    foto: document.getElementById('friend-foto').value, 
+                    xat_link: document.getElementById('friend-link').value 
+                }); 
+                ui.friendForm.reset(); 
+                showCustomNotification('Amigo añadido!', 'success'); 
+            } catch(error) { 
+                console.error("Error adding friend: ", error); 
+                showCustomNotification(`Error: ${error.message}`, 'error'); 
+            } 
+        });
+        async function deleteFriend(docId) { 
+            if (confirm('¿Estás seguro de que quieres eliminar a este amigo?')) { 
+                try { 
+                    await firestoreDeleteDoc(doc(db, 'profiles', profileId, 'friends', docId)); 
+                    showCustomNotification('Amigo eliminado.', 'success'); 
+                } catch(error) { 
+                    console.error("Error deleting friend:", error); 
+                    showCustomNotification(`Error: ${error.message}`, 'error'); 
+                } 
+            } 
+        }
+        
+        const canvas = document.getElementById('butterfly-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        let butterflies = [];
+        class Butterfly {
+            constructor() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 4 + 2; this.speedX = Math.random() * 1 - 0.5; this.speedY = Math.random() * 1 - 0.5; this.angle = Math.random() * Math.PI * 2; this.angleSpeed = Math.random() * 0.1 - 0.05; }
+            update() { this.x += this.speedX; this.y += this.speedY; this.angle += this.angleSpeed; if (this.x < 0) this.x = canvas.width; if (this.x > canvas.width) this.x = 0; if (this.y < 0) this.y = canvas.height; if (this.y > canvas.height) this.y = 0; }
+            draw() { ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.angle); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-this.size, -this.size * 0.5); ctx.lineTo(-this.size, this.size * 0.5); ctx.closePath(); ctx.moveTo(0, 0); ctx.lineTo(this.size, -this.size * 0.5); ctx.lineTo(this.size, this.size * 0.5); ctx.closePath(); ctx.fillStyle = `rgba(161, 98, 112, ${Math.random() * 0.5 + 0.3})`; ctx.fill(); ctx.restore(); }
+        }
+        function initButterflies() { for (let i = 0; i < 25; i++) butterflies.push(new Butterfly()); }
+        function animateButterflies() { ctx.clearRect(0, 0, canvas.width, canvas.height); butterflies.forEach(b => { b.update(); b.draw(); }); requestAnimationFrame(animateButterflies); }
+        initButterflies(); animateButterflies();
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; butterflies = []; initButterflies(); });
+    </script>
+</body>
+</html>
+

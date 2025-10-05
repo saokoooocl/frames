@@ -133,10 +133,21 @@
             cursor: pointer;
             border-bottom: 2px solid transparent;
             color: #a0aec0;
+            white-space: nowrap; /* Evita que el texto de la pestaña se rompa */
         }
         .admin-tab.active {
             color: #ffffff;
             border-bottom-color: #a16270;
+        }
+
+        #admin-panel nav {
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        #admin-panel nav::-webkit-scrollbar {
+            display: none;
         }
 
         #custom-notification {
@@ -198,7 +209,6 @@
             opacity: 1;
         }
 
-        /* --- Estilos para la carga suave --- */
         #main-content {
             opacity: 0;
             transition: opacity 0.6s ease-in-out;
@@ -272,12 +282,12 @@
             <div class="modal-content">
                 <button id="close-login-modal" type="button" class="absolute top-2 right-2 text-white hover:text-gray-300"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                 <h2 class="text-xl font-bold text-white mb-4">Admin Login</h2>
-                <form id="login-form" class="space-y-4">
+                <div id="login-form" class="space-y-4">
                     <input id="username" type="text" placeholder="Usuario" class="admin-input" required>
                     <input id="password" type="password" placeholder="Contraseña" class="admin-input" required>
-                    <button type="submit" class="admin-button w-full">Entrar</button>
+                    <button type="button" id="login-button" class="admin-button w-full">Entrar</button>
                     <p id="login-error" class="text-red-500 text-sm hidden">Credenciales incorrectas.</p>
-                </form>
+                </div>
             </div>
         </div>
 
@@ -286,7 +296,7 @@
                 <button id="close-admin-panel" class="absolute top-2 right-2 text-white hover:text-gray-300"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                 <h2 class="text-xl font-bold text-white mb-4">Panel de Administración</h2>
                 <div class="border-b border-gray-700 mb-4">
-                    <nav class="flex space-x-2" id="admin-tabs">
+                    <nav class="flex" id="admin-tabs">
                         <button data-tab="descripcion" class="admin-tab active">Descripción</button>
                         <button data-tab="corazon" class="admin-tab">Corazón</button>
                         <button data-tab="amigos" class="admin-tab">Amigos</button>
@@ -382,7 +392,7 @@
             closeAdminPanel: document.getElementById('close-admin-panel'),
             friendsListContainer: document.getElementById('friends-list-container'),
             heartContent: document.getElementById('heart-content'),
-            loginForm: document.getElementById('login-form'),
+            loginButton: document.getElementById('login-button'),
             loginError: document.getElementById('login-error'),
             quote: document.getElementById('quote'),
             quoteForm: document.getElementById('quote-form'),
@@ -436,15 +446,15 @@
         ui.closeLoginModal.addEventListener('click', (e) => { e.preventDefault(); hideFloatingModal(ui.loginModal); });
         ui.closeAdminPanel.addEventListener('click', (e) => { e.preventDefault(); hideFloatingModal(ui.adminPanel); });
 
-        ui.loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
+        ui.loginButton.addEventListener('click', () => {
             const user = document.getElementById('username').value;
             const pass = document.getElementById('password').value;
             if (user === 'admin' && pass === 'fait2025') {
                 hideFloatingModal(ui.loginModal);
                 showFloatingModal(ui.adminPanel);
                 ui.loginError.classList.add('hidden');
-                ui.loginForm.reset();
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
             } else { 
                 ui.loginError.classList.remove('hidden');
                 showCustomNotification('Credenciales incorrectas.', 'error');

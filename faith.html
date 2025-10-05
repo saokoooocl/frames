@@ -98,7 +98,11 @@
 
         .dimensional-bg {
             animation: dimensional-pan 20s infinite alternate ease-in-out;
-            background-color: #1a1a1a; /* Fallback background color */
+            background-color: #1a1a1a;
+        }
+
+        #profile-pic {
+            background-color: #1a1a1a;
         }
         
         #quote {
@@ -133,7 +137,7 @@
             cursor: pointer;
             border-bottom: 2px solid transparent;
             color: #a0aec0;
-            white-space: nowrap; /* Evita que el texto de la pestaña se rompa */
+            white-space: nowrap;
         }
         .admin-tab.active {
             color: #ffffff;
@@ -208,7 +212,6 @@
             transform: scale(1);
             opacity: 1;
         }
-
     </style>
 </head>
 <body class="bg-zinc-900 flex items-center justify-center min-h-screen p-4">
@@ -227,13 +230,13 @@
         </nav>
 
         <main class="flex-1 flex flex-col relative overflow-hidden">
-            <div id="main-background" class="dimensional-bg absolute inset-0 bg-cover bg-center" style="background-image: url('https://i.ibb.co/DCwG9Xn/image-3a856a.png');"></div>
+            <div id="main-background" class="dimensional-bg absolute inset-0 bg-cover bg-center" style="background-image: url('https://xatimg.com/image/7TLXiY9fXRCa.jpg');"></div>
             <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
 
             <div id="main-content" class="relative z-10 flex flex-col h-full p-3 pt-8">
                 <div id="profile-view" class="flex-1 flex flex-col items-center justify-center text-center">
                     <div class="relative w-20 h-20 mb-2 flex-shrink-0">
-                        <img id="profile-pic" src="https://i.ibb.co/DCwG9Xn/image-3a856a.png" alt="Foto de perfil" class="w-full h-full rounded-full border-2 border-white object-cover shadow-lg" onerror="this.onerror=null;this.src='https://placehold.co/80x80/1e1b2e/ffffff?text=Error';">
+                        <img id="profile-pic" src="https://xatimg.com/image/7TLXiY9fXRCa.jpg" alt="Foto de perfil" class="w-full h-full rounded-full border-2 border-white object-cover shadow-lg">
                         <div class="online-badge"></div>
                     </div>
                     <h1 class="wave-text text-2xl font-bold text-white tracking-wider"><span>𝐅</span><span style="animation-delay: 0.1s;">𝐚</span><span style="animation-delay: 0.2s;">𝐢</span><span style="animation-delay: 0.3s;">𝐭</span><span style="animation-delay: 0.4s;">𝐡</span></h1>
@@ -472,23 +475,7 @@
         }
 
         const renderConfig = (data) => {
-            const defaultQuote = "Somos como líneas paralelas, destinadas a recorrer el mismo camino, pero jamás a encontrarse.";
-            const defaultVideoId = 'z21NNvQ4Qjs';
-            const defaultPhotoUrl = 'https://i.ibb.co/DCwG9Xn/image-3a856a.png';
-
-            // Render text content first
-            ui.quote.textContent = data.text || defaultQuote;
-            document.getElementById('quote-text').value = data.text || defaultQuote;
-            
-            const videoUrl = data.videoUrl || '';
-            document.getElementById('video-url').value = videoUrl;
-            const videoId = getYoutubeVideoId(videoUrl) || defaultVideoId;
-            const newVideoSrc = `https://www.youtube.com/embed/${videoId}`;
-            if (ui.youtubeIframe.src !== newVideoSrc) {
-                ui.youtubeIframe.src = newVideoSrc;
-            }
-
-            // Render photo content
+            const defaultPhotoUrl = 'https://xatimg.com/image/7TLXiY9fXRCa.jpg';
             const photoUrl = data.photoUrl || defaultPhotoUrl;
             document.getElementById('photo-url').value = photoUrl;
             
@@ -498,8 +485,17 @@
             if (ui.mainBackground.style.backgroundImage !== `url("${photoUrl}")`) {
                 ui.mainBackground.style.backgroundImage = `url("${photoUrl}")`;
             }
-            // Show content now that defaults are set
-            ui.mainContent.classList.add('loaded');
+
+            ui.quote.textContent = data.text || "Somos como líneas paralelas, destinadas a recorrer el mismo camino, pero jamás a encontrarse.";
+            document.getElementById('quote-text').value = data.text || "Somos como líneas paralelas, destinadas a recorrer el mismo camino, pero jamás a encontrarse.";
+            
+            const videoUrl = data.videoUrl || '';
+            document.getElementById('video-url').value = videoUrl;
+            const videoId = getYoutubeVideoId(videoUrl) || 'z21NNvQ4Qjs';
+            const newVideoSrc = `https://www.youtube.com/embed/${videoId}`;
+            if (ui.youtubeIframe.src !== newVideoSrc) {
+                ui.youtubeIframe.src = newVideoSrc;
+            }
         };
 
         const renderFriends = (friends) => {

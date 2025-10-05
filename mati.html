@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -251,31 +250,75 @@
         <p><strong>Visitas:</strong><span id="visitor-counter-span"></span></p>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
+    <script type="module">
+        // Importaciones de Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        
+        // --- Configuración de Firebase ---
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        let db;
+        
+        // --- Función para guardar la información del visitante ---
+        async function saveVisitorInfo(visitorData) {
+            if (!db) {
+                console.error("La base de datos no está inicializada. No se puede guardar la visita.");
+                return;
+            }
+            try {
+                const visitorsCollectionPath = `/artifacts/${appId}/public/data/visitors`;
+                await addDoc(collection(db, visitorsCollectionPath), {
+                    ip: visitorData.ip,
+                    location: visitorData.location,
+                    timestamp: serverTimestamp()
+                });
+            } catch (error) {
+                console.error("Error al guardar la información del visitante: ", error);
+            }
+        }
+        
+        // --- Función para inicializar Firebase ---
+        async function initializeFirebase() {
+            try {
+                if (firebaseConfig && firebaseConfig.apiKey) {
+                    const app = initializeApp(firebaseConfig);
+                    db = getFirestore(app);
+                    const auth = getAuth(app);
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                    return true; // Éxito
+                } else {
+                   console.warn("Configuración de Firebase no encontrada. El guardado de visitas está deshabilitado.");
+                   return false; // Fallo
+                }
+            } catch (error) {
+                console.error("Error inicializando Firebase:", error);
+                return false; // Fallo
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Inicializar Firebase primero y esperar a que termine
+            const firebaseReady = await initializeFirebase();
+
             const rainContainer = document.getElementById('number-rain');
-            const numberOfNumbers = 60; // Cantidad de números lloviendo
+            const numberOfNumbers = 60;
 
             for (let i = 0; i < numberOfNumbers; i++) {
                 const numberEl = document.createElement('span');
                 numberEl.classList.add('number');
                 numberEl.textContent = '15051993';
-
-                // Posición horizontal aleatoria
                 numberEl.style.left = `${Math.random() * 100}vw`;
-                
-                // Duración de la animación aleatoria
-                numberEl.style.animationDuration = `${Math.random() * 5 + 4}s`; // entre 4s y 9s
-                
-                // Retraso de la animación aleatorio
+                numberEl.style.animationDuration = `${Math.random() * 5 + 4}s`;
                 numberEl.style.animationDelay = `${Math.random() * 6}s`;
-
-                // Tamaño de fuente aleatorio
                 numberEl.style.fontSize = `${Math.random() * 1.5 + 0.8}em`;
-
-                // Opacidad aleatoria
-                numberEl.style.opacity = Math.random() * 0.5 + 0.2; // entre 0.2 y 0.7
-
+                numberEl.style.opacity = Math.random() * 0.5 + 0.2;
                 rainContainer.appendChild(numberEl);
             }
 
@@ -283,38 +326,45 @@
             const subtitleEl = document.getElementById('subtitle');
             const textToType = subtitleEl.textContent;
             let i = 0;
-            subtitleEl.textContent = ''; // Limpiamos el texto inicial
+            subtitleEl.textContent = ''; 
 
             function typeWriter() {
                 if (i < textToType.length) {
                     subtitleEl.textContent += textToType.charAt(i);
                     i++;
-                    setTimeout(typeWriter, 120); // Velocidad de escritura (120ms)
+                    setTimeout(typeWriter, 120);
                 } else {
-                    // Una vez que termina de escribir, añade una clase para ocultar el cursor
                     setTimeout(() => {
                          subtitleEl.classList.add('typing-finished');
-                    }, 1500); // Espera 1.5 segundos antes de quitar el cursor
+                    }, 1500);
                 }
             }
+            setTimeout(typeWriter, 500);
 
-            // Iniciar la animación de escritura
-            setTimeout(typeWriter, 500); // Pequeño retraso antes de empezar a escribir
-
-            // --- Obtener IP y Ubicación del Visitante ---
+            // --- Obtener IP, Ubicación y Guardar ---
             async function getVisitorInfo() {
                 const ipEl = document.getElementById('ip-address');
                 const locationEl = document.getElementById('location');
                 try {
-                    const response = await fetch('https://ipapi.co/json/');
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
+                    // SOLUCIÓN DEFINITIVA: Usar un endpoint más robusto y permisivo (ipinfo.io)
+                    const response = await fetch('https://ipinfo.io/json');
+                    if (!response.ok) throw new Error('La respuesta de la red no fue correcta');
                     const data = await response.json();
-                    ipEl.textContent = data.ip;
-                    locationEl.textContent = `${data.city}, ${data.country_name}`;
+                    
+                    // Adaptar el código a la estructura de la nueva API
+                    const ip = data.ip || 'N/A';
+                    const location = `${data.city || 'Ciudad desconocida'}, ${data.country || 'País desconocido'}`;
+
+                    ipEl.textContent = ip;
+                    locationEl.textContent = location;
+                    
+                    // Solo guardar si Firebase se inicializó correctamente
+                    if (firebaseReady) {
+                        await saveVisitorInfo({ ip, location });
+                    }
+
                 } catch (error) {
-                    console.error('Error fetching visitor info:', error);
+                    console.error('Error al obtener la información del visitante:', error);
                     ipEl.textContent = 'No disponible';
                     locationEl.textContent = 'No disponible';
                 }
@@ -328,7 +378,6 @@
                 counterLink.target = "_blank";
 
                 const counterImg = document.createElement('img');
-                // Este contador es único para esta página.
                 counterImg.src = "https://hitwebcounter.com/counter/counter.php?page=12398710&style=0007&nbdigits=6&type=page&initCount=0";
                 counterImg.title = "Contador de Visitas";
                 counterImg.alt = "Contador de Visitas";
@@ -338,7 +387,6 @@
                 counterSpan.appendChild(counterLink);
             }
 
-
             // Ejecutar las funciones
             getVisitorInfo();
             loadVisitorCounter();
@@ -346,3 +394,4 @@
     </script>
 </body>
 </html>
+

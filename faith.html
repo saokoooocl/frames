@@ -282,7 +282,7 @@
             <div class="modal-content">
                 <button id="close-login-modal" type="button" class="absolute top-2 right-2 text-white hover:text-gray-300"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                 <h2 class="text-xl font-bold text-white mb-4">Admin Login</h2>
-                <div id="login-form" class="space-y-4">
+                <div class="space-y-4">
                     <input id="username" type="text" placeholder="Usuario" class="admin-input" required>
                     <input id="password" type="password" placeholder="Contraseña" class="admin-input" required>
                     <button type="button" id="login-button" class="admin-button w-full">Entrar</button>
@@ -306,50 +306,50 @@
                 </div>
                 <div id="admin-tab-content">
                     <div id="tab-descripcion">
-                        <form id="quote-form" class="space-y-3">
+                        <div class="space-y-3">
                             <h3 class="font-semibold text-white">Descripción Principal</h3>
                             <textarea id="quote-text" placeholder="Frase descriptiva" class="admin-input" rows="3" required></textarea>
-                            <button type="submit" class="admin-button">Guardar Descripción</button>
-                        </form>
+                            <button type="button" id="save-quote-button" class="admin-button">Guardar Descripción</button>
+                        </div>
                     </div>
                     <div id="tab-corazon" class="hidden">
-                        <form id="esposo-form" class="space-y-3">
+                        <div class="space-y-3">
                             <h3 class="font-semibold text-white">Sección Corazón</h3>
                             <input type="text" id="esposo-nombre" placeholder="Nombre" class="admin-input" required>
                             <input type="text" id="esposo-id" placeholder="ID Xat" class="admin-input" required>
                             <input type="url" id="esposo-foto" placeholder="URL de la Foto" class="admin-input" required>
                             <input type="url" id="esposo-link" placeholder="URL Xat.me" class="admin-input" required>
                             <textarea id="esposo-frase" placeholder="Frase" class="admin-input" rows="2" required></textarea>
-                            <button type="submit" class="admin-button">Guardar Cambios</button>
-                        </form>
+                            <button type="button" id="save-esposo-button" class="admin-button">Guardar Cambios</button>
+                        </div>
                     </div>
                     <div id="tab-amigos" class="hidden">
-                        <form id="friend-form" class="space-y-3 mb-4">
+                        <div class="space-y-3 mb-4">
                             <h3 class="font-semibold text-white">Añadir Amigo</h3>
                             <input type="text" id="friend-nombre" placeholder="Nombre" class="admin-input" required>
                             <input type="text" id="friend-id" placeholder="ID Xat" class="admin-input" required>
                             <input type="url" id="friend-foto" placeholder="URL de la Foto" class="admin-input" required>
                             <input type="url" id="friend-link" placeholder="URL Xat.me" class="admin-input" required>
-                            <button type="submit" class="admin-button">Añadir Amigo</button>
-                        </form>
+                            <button type="button" id="add-friend-button" class="admin-button">Añadir Amigo</button>
+                        </div>
                         <div id="admin-friends-list">
                             <h3 class="font-semibold text-white border-b border-gray-600 pb-1 mb-2">Lista de Amigos</h3>
                             <ul id="admin-friends-container" class="space-y-2 max-h-40 overflow-y-auto"></ul>
                         </div>
                     </div>
                     <div id="tab-video" class="hidden">
-                        <form id="video-form" class="space-y-3">
+                        <div class="space-y-3">
                             <h3 class="font-semibold text-white">Video de YouTube</h3>
                             <input type="url" id="video-url" placeholder="URL del video de YouTube" class="admin-input" required>
-                            <button type="submit" class="admin-button">Guardar Video</button>
-                        </form>
+                            <button type="button" id="save-video-button" class="admin-button">Guardar Video</button>
+                        </div>
                     </div>
                     <div id="tab-fotos" class="hidden">
-                        <form id="photo-form" class="space-y-3">
+                        <div class="space-y-3">
                             <h3 class="font-semibold text-white">Fotos del Perfil</h3>
                             <input type="url" id="photo-url" placeholder="URL de la foto (perfil y fondo)" class="admin-input" required>
-                            <button type="submit" class="admin-button">Guardar Fotos</button>
-                        </form>
+                            <button type="button" id="save-photo-button" class="admin-button">Guardar Fotos</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -395,11 +395,11 @@
             loginButton: document.getElementById('login-button'),
             loginError: document.getElementById('login-error'),
             quote: document.getElementById('quote'),
-            quoteForm: document.getElementById('quote-form'),
-            esposoForm: document.getElementById('esposo-form'),
-            friendForm: document.getElementById('friend-form'),
-            videoForm: document.getElementById('video-form'),
-            photoForm: document.getElementById('photo-form'),
+            saveQuoteButton: document.getElementById('save-quote-button'),
+            saveEsposoButton: document.getElementById('save-esposo-button'),
+            addFriendButton: document.getElementById('add-friend-button'),
+            saveVideoButton: document.getElementById('save-video-button'),
+            savePhotoButton: document.getElementById('save-photo-button'),
             adminFriendsContainer: document.getElementById('admin-friends-container'),
             adminTabs: document.getElementById('admin-tabs'),
             adminTabContent: document.getElementById('admin-tab-content'),
@@ -573,13 +573,12 @@
             catch (error) { console.error(errorMsg, error); showCustomNotification(`Error: ${error.message}`, 'error'); }
         }
 
-        ui.quoteForm.addEventListener('submit', (e) => { e.preventDefault(); saveData(configRef, { text: document.getElementById('quote-text').value }, 'Descripción actualizada!', 'Error al actualizar descripción:'); });
-        ui.esposoForm.addEventListener('submit', (e) => { e.preventDefault(); saveData(esposoRef, { nombre: document.getElementById('esposo-nombre').value, id_xat: document.getElementById('esposo-id').value, foto: document.getElementById('esposo-foto').value, xat_link: document.getElementById('esposo-link').value, frase: document.getElementById('esposo-frase').value }, 'Datos del corazón actualizados!', 'Error al actualizar datos del corazón:'); });
-        ui.videoForm.addEventListener('submit', (e) => { e.preventDefault(); saveData(configRef, { videoUrl: document.getElementById('video-url').value }, 'Video actualizado!', 'Error al actualizar video:')});
-        ui.photoForm.addEventListener('submit', (e) => { e.preventDefault(); saveData(configRef, { photoUrl: document.getElementById('photo-url').value }, 'Fotos actualizadas!', 'Error al actualizar fotos:')});
+        ui.saveQuoteButton.addEventListener('click', () => { saveData(configRef, { text: document.getElementById('quote-text').value }, 'Descripción actualizada!', 'Error al actualizar descripción:'); });
+        ui.saveEsposoButton.addEventListener('click', () => { saveData(esposoRef, { nombre: document.getElementById('esposo-nombre').value, id_xat: document.getElementById('esposo-id').value, foto: document.getElementById('esposo-foto').value, xat_link: document.getElementById('esposo-link').value, frase: document.getElementById('esposo-frase').value }, 'Datos del corazón actualizados!', 'Error al actualizar datos del corazón:'); });
+        ui.saveVideoButton.addEventListener('click', () => { saveData(configRef, { videoUrl: document.getElementById('video-url').value }, 'Video actualizado!', 'Error al actualizar video:')});
+        ui.savePhotoButton.addEventListener('click', () => { saveData(configRef, { photoUrl: document.getElementById('photo-url').value }, 'Fotos actualizadas!', 'Error al actualizar fotos:')});
 
-        ui.friendForm.addEventListener('submit', async (e) => { 
-            e.preventDefault(); 
+        ui.addFriendButton.addEventListener('click', async () => { 
             try { 
                 await addDoc(friendsRef, { 
                     nombre: document.getElementById('friend-nombre').value, 
@@ -587,7 +586,11 @@
                     foto: document.getElementById('friend-foto').value, 
                     xat_link: document.getElementById('friend-link').value 
                 }); 
-                ui.friendForm.reset(); 
+                // Reset form fields
+                document.getElementById('friend-nombre').value = '';
+                document.getElementById('friend-id').value = '';
+                document.getElementById('friend-foto').value = '';
+                document.getElementById('friend-link').value = '';
                 showCustomNotification('Amigo añadido!', 'success'); 
             } catch(error) { 
                 console.error("Error adding friend: ", error); 

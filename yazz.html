@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yaaz Animado</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+    <style>
+        /* Estilo base para el cuerpo del documento */
+        body {
+            /* Nuevo fondo de pantalla completo */
+            background-image: url('https://xatimg.com/image/ga69V6rFP6hm.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            /* Quitamos el margen por defecto */
+            margin: 0;
+            /* Usamos Flexbox para centrar el contenido */
+            display: flex;
+            justify-content: center; /* Centramos el contenido */
+            align-items: center;
+            /* Hacemos que ocupe toda la altura de la ventana */
+            height: 100vh;
+            /* Evitamos que el contenido se desborde */
+            overflow: hidden;
+            /* Asignamos la fuente temática original */
+            font-family: 'Creepster', cursive;
+            position: relative; /* Necesario para los efectos */
+            box-sizing: border-box;
+        }
+
+        /* Contenedor para la lluvia de corazones */
+        .heart-rain-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        /* Estilo de cada corazon */
+        .heart {
+            position: absolute;
+            top: -50px; /* Comienzan desde arriba, fuera de la pantalla */
+            color: rgba(192, 192, 192, 0.7); /* Color plateado semitransparente */
+            font-size: 2rem;
+            text-shadow: 0 0 8px #ffffff; /* Sombra blanca para un brillo plateado */
+            animation: fall-heart linear infinite;
+            user-select: none;
+            font-family: sans-serif; /* Fuente que soporta emojis */
+        }
+
+        /* Animación para que los corazones caigan y roten */
+        @keyframes fall-heart {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(105vh) rotate(360deg); /* Caen y giran */
+                opacity: 0.8;
+            }
+        }
+
+        /* Overlay para el efecto de opacidad del fondo */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1; /* Detrás de los corazones pero sobre el fondo */
+            background-color: #000; /* Color negro para el overlay */
+            animation: background-fade 4s ease-in-out infinite alternate;
+            pointer-events: none; /* Para que no interfiera con el contenido */
+        }
+        
+        /* Keyframes para el efecto de desvanecimiento */
+        @keyframes background-fade {
+            from {
+                opacity: 0.1; /* El fondo es más visible */
+            }
+            to {
+                opacity: 0.7; /* El fondo se oscurece */
+            }
+        }
+
+        /* Contenedor para el texto animado y el subtítulo */
+        .content-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative; /* Aseguramos que el texto esté sobre la viñeta */
+            z-index: 4;
+        }
+
+        /* Contenedor para el texto animado */
+        .animated-text {
+            display: flex;
+        }
+
+        /* Estilo para cada letra */
+        .animated-text span {
+            font-size: 15rem;
+            color: #C0C0C0; /* Color plateado */
+            font-family: 'cursive'; /* Fuente para el estilo especial */
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5); /* Sombra sutil para profundidad */
+            animation: float 6s ease-in-out infinite;
+            position: relative;
+        }
+
+        /* Animación de flotar */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(-1.5deg); }
+            50% { transform: translateY(-25px) rotate(1.5deg); }
+            100% { transform: translateY(0px) rotate(-1.5deg); }
+        }
+
+        /* Estilo para el subtítulo */
+        .subtitle {
+            font-size: 2.5rem;
+            color: #C0C0C0; /* Color plateado */
+            text-shadow: 1px 1px 10px rgba(0, 0, 0, 1);
+            margin-top: 1rem;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: .1em solid #C0C0C0; /* Color plateado */
+            width: 0;
+            animation: typing 2s steps(4, end) forwards, blink-caret .75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 4ch; }
+        }
+        
+        .heart-emoji {
+            font-family: sans-serif;
+            text-shadow: none;
+            color: #C0C0C0; /* Color plateado para el corazón */
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: #C0C0C0; } /* Color plateado */
+        }
+
+        /* Botón para abrir el video */
+        #open-music-btn {
+            position: fixed;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            z-index: 999;
+            cursor: pointer;
+            font-size: 1.5rem;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            border-radius: 30px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            font-family: sans-serif;
+            white-space: nowrap;
+        }
+
+        #open-music-btn .btn-text {
+            margin-left: 10px;
+            font-size: 1rem;
+        }
+
+        #open-music-btn:hover {
+            transform: translateY(-50%) scale(1.05);
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        /* Lightbox (ventana emergente) */
+        .lightbox-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: none; /* Oculto por defecto */
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+        }
+
+        .lightbox-content iframe {
+            border: 3px solid #C0C0C0; /* Borde plateado */
+            border-radius: 8px;
+            width: 80vw;
+            max-width: 800px;
+            height: calc(80vw * 0.5625); /* Mantiene relación 16:9 */
+            max-height: 450px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            font-size: 2.5rem;
+            color: #fff;
+            background-color: #808080; /* Gris para el botón de cerrar */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            line-height: 40px;
+            cursor: pointer;
+            font-family: sans-serif;
+        }
+
+        /* Media queries para móviles */
+        @media (max-width: 768px) {
+            .animated-text span { font-size: 15vw; }
+            .subtitle { font-size: 1.5rem; }
+            .heart { font-size: 1.5rem; }
+            #open-music-btn {
+                font-size: 2rem;
+                width: 50px;
+                height: 50px;
+                padding: 0;
+                border-radius: 50%;
+            }
+            #open-music-btn .btn-text {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Botón para abrir el video -->
+    <div id="open-music-btn">🎵<span class="btn-text">Mi canción favorita</span></div>
+
+    <!-- Lightbox (ventana emergente para el video) -->
+    <div id="music-lightbox" class="lightbox-overlay">
+        <div class="lightbox-content">
+            <span id="close-music-btn" class="close-btn">&times;</span>
+            <iframe id="youtube-video"
+                width="560" height="315"
+                src=""
+                title="YouTube video player"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen>
+            </iframe>
+        </div>
+    </div>
+
+    <div class="heart-rain-container"></div>
+
+    <div class="content-container">
+        <div class="animated-text">
+            <span>𝓨𝓪𝓪𝔃</span>
+        </div>
+        <div class="subtitle">♡⃕QR</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Lógica de la lluvia de corazones
+            const rainContainer = document.querySelector('.heart-rain-container');
+            const heartCount = 50;
+            const hearts = ['♡', '♥'];
+
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                heart.innerText = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.left = `${Math.random() * 100}vw`;
+                const size = Math.random() * 2 + 1.5;
+                heart.style.fontSize = `${size}rem`;
+                const duration = Math.random() * 5 + 4;
+                heart.style.animationDuration = `${duration}s`;
+                const delay = Math.random() * 10;
+                heart.style.animationDelay = `${delay}s`;
+                rainContainer.appendChild(heart);
+            }
+
+            // Lógica del video emergente
+            const openBtn = document.getElementById('open-music-btn');
+            const closeBtn = document.getElementById('close-music-btn');
+            const lightbox = document.getElementById('music-lightbox');
+            const videoFrame = document.getElementById('youtube-video');
+            const videoSrc = "https://www.youtube.com/embed/7m9yb5BLVwo?autoplay=1&loop=1&playlist=7m9yb5BLVwo";
+
+            openBtn.addEventListener('click', () => {
+                videoFrame.src = videoSrc;
+                lightbox.style.display = 'flex';
+            });
+
+            const closeLightbox = () => {
+                lightbox.style.display = 'none';
+                videoFrame.src = ""; // Detiene el video
+            };
+
+            closeBtn.addEventListener('click', closeLightbox);
+            
+            // Cierra el lightbox si se hace clic en el fondo oscuro
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox) {
+                    closeLightbox();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

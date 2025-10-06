@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fondo Zandy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Poppins:wght@300&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos generales del cuerpo de la página */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden; /* Evita barras de desplazamiento */
+        }
+
+        /* Contenedor principal para centrar el contenido */
+        .container {
+            display: flex;
+            flex-direction: column; /* Apila los elementos verticalmente */
+            justify-content: center; /* Centrado horizontal */
+            align-items: center; /* Centrado vertical */
+            height: 100%;
+            width: 100%;
+            padding: 1rem;
+            box-sizing: border-box;
+            /* Fondo con un gradiente animado */
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            position: relative; /* Necesario para posicionar elementos hijos de forma absoluta */
+        }
+        
+        /* Contenedor para las flores que caen */
+        #flower-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Permite hacer clic a través de las flores */
+            overflow: hidden;
+        }
+
+        /* Estilo para una flor individual */
+        .flower {
+            position: absolute;
+            top: -10%; /* Comienza fuera de la pantalla */
+            user-select: none;
+            font-size: 2rem;
+            animation: fall linear forwards;
+            --x-end: 0vw; /* Variable CSS para el balanceo horizontal */
+            opacity: 0.8;
+        }
+
+
+        /* Estilo del texto "Zandy" */
+        .name, .phone-number, .quote {
+             position: relative; /* Asegura que el texto esté sobre las flores */
+             z-index: 2;
+        }
+
+        .name {
+            font-family: 'Lobster', cursive; /* Nueva fuente para el nombre */
+            font-size: clamp(4rem, 20vw, 15rem); /* Tamaño de fuente adaptable */
+            color: white;
+            text-shadow: 
+                0 0 10px rgba(255, 255, 255, 0.8),
+                0 0 20px rgba(255, 255, 255, 0.6),
+                0 0 30px rgba(0, 0, 0, 0.3);
+            animation: pulse 4s ease-in-out infinite, textGlow 5s ease-in-out infinite; /* Animación de pulso y brillo */
+        }
+
+        /* Estilo para el número de teléfono */
+        .phone-number {
+            font-family: 'Poppins', sans-serif;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: clamp(1rem, 3vw, 1.8rem);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+            margin-top: -2.5rem; /* Margen negativo para acercarlo al nombre */
+            letter-spacing: 1.5px;
+            animation: pulse 4s ease-in-out infinite, textGlow 5s ease-in-out infinite; /* Mismas animaciones que Zandy */
+        }
+
+        /* Estilo para la frase inspiradora */
+        .quote {
+            font-family: 'Poppins', sans-serif;
+            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+            margin-top: 2rem;
+            max-width: 800px;
+            line-height: 1.6;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+            animation: fadeIn 4s ease-in-out infinite alternate; /* Animación de fade continuo */
+        }
+
+
+        /* Animación para el fondo gradiente */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Animación para que el texto pulse */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Animación para el brillo del texto */
+        @keyframes textGlow {
+            0%, 100% {
+                text-shadow: 
+                    0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6), 0 0 35px #23a6d5;
+            }
+            50% {
+                text-shadow: 
+                    0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6), 0 0 35px #e73c7e;
+            }
+        }
+        
+        /* Animación para la caída de las flores */
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) translateX(var(--x-end)) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Animación para que la frase aparezca */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="flower-container"></div>
+        <div class="name">Zandy</div>
+        <div class="phone-number">(96820347)</div>
+        <p class="quote">
+            No te arrepientas de nada. La gente buena te da felicidad, la mala te da lecciones y la maravillosa te da recuerdos.
+        </p>
+    </div>
+
+    <script>
+        const flowerContainer = document.getElementById('flower-container');
+        const flowers = ['🌸', '🌺', '🌼', '🌷', '🌻', '🌹'];
+
+        function createFlower() {
+            const flower = document.createElement('div');
+            flower.classList.add('flower');
+            
+            // Selecciona un tipo de flor aleatorio
+            flower.innerText = flowers[Math.floor(Math.random() * flowers.length)];
+
+            // Asigna propiedades aleatorias para una apariencia más natural
+            flower.style.left = Math.random() * 100 + 'vw';
+            flower.style.fontSize = Math.random() * 1.5 + 1 + 'rem'; // Tamaño entre 1rem y 2.5rem
+            flower.style.animationDuration = Math.random() * 5 + 7 + 's'; // Duración entre 7s y 12s
+            flower.style.setProperty('--x-end', `${Math.random() * 20 - 10}vw`); // Balanceo horizontal
+
+            flowerContainer.appendChild(flower);
+
+            // Elimina la flor del DOM después de que termine la animación para no sobrecargar la página
+            setTimeout(() => {
+                flower.remove();
+            }, 12000); // Un poco más que la duración máxima de la animación
+        }
+
+        // Crea una nueva flor cada 300 milisegundos
+        setInterval(createFlower, 300);
+    </script>
+</body>
+</html>
+

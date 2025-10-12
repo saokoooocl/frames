@@ -3,247 +3,480 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teki Animado</title>
+    <title>Perfil de Teki</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Estilo base para el cuerpo del documento */
-        body {
-            /* Nuevo fondo de pantalla completo */
-            background-image: url('https://xatimg.com/image/fjICfT0uUDze.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            /* Quitamos el margen por defecto */
-            margin: 0;
-            /* Usamos Flexbox para centrar el contenido */
-            display: flex;
-            justify-content: center; /* Centramos el contenido */
-            align-items: center;
-            /* Hacemos que ocupe toda la altura de la ventana */
-            height: 100vh;
-            /* Evitamos que el contenido se desborde */
-            overflow: hidden;
-            /* Asignamos la fuente temática original */
-            font-family: 'Creepster', cursive;
-            position: relative; /* Necesario para los efectos */
-            box-sizing: border-box;
+        :root { --glow-color: hsl(0, 100%, 50%); }
+        html, body {
+            height: 100%; width: 100%; overflow: hidden;
+            font-family: 'Poppins', sans-serif; color: #e5e7eb; background-color: #000;
         }
-
-        /* Contenedor para la lluvia de demonios */
-        .demon-rain-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: 2;
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+        .content-wrapper { position: relative; z-index: 1; height: 100%; width: 100%; }
+        .main-container {
+            border: 1px solid rgba(255, 100, 100, 0.15); border-radius: 1.5rem;
+            height: 95vh; max-height: 600px; width: 100%; max-width: 48rem;
+            display: flex; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
         }
-
-        /* Estilo de cada demonio */
-        .demon {
-            position: absolute;
-            top: -50px; /* Comienzan desde arriba, fuera de la pantalla */
-            color: rgba(150, 0, 0, 0.7); /* Rojo oscuro semitransparente */
-            font-size: 2rem;
-            text-shadow: 0 0 8px #ff0000;
-            animation: fall-demon linear infinite;
-            user-select: none;
+        .nav-panel { width: 256px; }
+        .content-area { flex: 1; }
+        .profile-name {
+            font-weight: 700; font-size: 2.25rem; letter-spacing: 0.05em; color: #ffffff;
+            text-shadow: 0 0 10px var(--glow-color);
         }
-
-        /* Animación para que los demonios caigan y roten */
-        @keyframes fall-demon {
-            0% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(105vh) rotate(360deg); /* Caen y giran */
-                opacity: 0.8;
-            }
+        .nav-avatar {
+             border: 3px solid var(--glow-color); box-shadow: 0 0 25px var(--glow-color);
+             transition: all 0.3s ease;
         }
-
-        /* Overlay para el efecto de opacidad del fondo */
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1; /* Detrás de los demonios pero sobre el fondo */
-            background-color: #000; /* Color negro para el overlay */
-            animation: background-fade 4s ease-in-out infinite alternate;
-            pointer-events: none; /* Para que no interfiera con el contenido */
+        .nav-button {
+            position: relative; display: flex; align-items: center; width: 100%;
+            text-align: left; padding: 0.75rem 1.5rem; border-radius: 0.5rem;
+            color: rgba(255, 255, 255, 0.7); transition: all 0.2s ease; font-weight: 500;
         }
+        .nav-button:hover, .nav-button.active { 
+            background: rgba(255, 0, 0, 0.2); color: #fff; box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+        }
+        .content-section { display: none; animation: fadeIn 0.5s ease-in-out; height: 100%; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .friend-card {
+            background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 100, 100, 0.1);
+            transition: all 0.3s ease-in-out;
+        }
+        .friend-card:hover { 
+            transform: translateY(-5px); border-color: var(--glow-color);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.4); 
+        }
+        /* Estilos para el panel de admin y login */
+        .admin-modal-bg { background-color: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); }
+        .admin-modal-content { background-color: #111; border: 1px solid rgba(255, 100, 100, 0.2); }
+        .form-input { 
+            background-color: #222; border: 1px solid #444; border-radius: 0.5rem;
+            padding: 0.5rem 1rem; color: #fff;
+        }
+        .form-input:focus { outline: none; border-color: var(--glow-color); box-shadow: 0 0 10px var(--glow-color); }
+        .btn-primary { 
+            background-color: var(--glow-color); color: white; font-weight: bold;
+            padding: 0.5rem 1.5rem; border-radius: 0.5rem; transition: all 0.2s; 
+        }
+        .btn-primary:hover { filter: brightness(1.2); }
+        .btn-secondary { background-color: #333; } .btn-secondary:hover { background-color: #444; }
+        .btn-danger { background-color: #500; } .btn-danger:hover { background-color: #800; }
         
-        /* Keyframes para el efecto de desvanecimiento */
-        @keyframes background-fade {
-            from {
-                opacity: 0.1; /* El fondo es más visible */
-            }
-            to {
-                opacity: 0.7; /* El fondo se oscurece */
-            }
+        /* Animación para el reproductor de música */
+        @keyframes pulseGlow {
+          0%, 100% { box-shadow: 0 0 10px rgba(255, 0, 0, 0.4), 0 0 20px rgba(255, 0, 0, 0.3); }
+          50% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.7), 0 0 40px rgba(255, 0, 0, 0.5); }
         }
-
-        /* Contenedor para el texto animado y el subtítulo */
-        .content-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            position: relative; /* Aseguramos que el texto esté sobre la viñeta */
-            z-index: 4;
-            /* Se ha eliminado el transform: translateX para centrar el contenido */
-        }
-
-        /* Contenedor para el texto animado */
-        .animated-text {
-            display: flex;
-        }
-
-        /* Estilo para cada letra */
-        .animated-text span {
-            font-size: 15rem; /* Se ha reducido el tamaño de la fuente */
-            color: #6d0000;
-            animation: blood-pulse 1.2s ease-in-out infinite alternate, float 6s ease-in-out infinite;
-            position: relative;
-        }
-
-        /* Animación de pulso sangriento con efecto de goteo */
-        @keyframes blood-pulse {
-            from {
-                text-shadow:
-                    0 0 5px #ff1100,
-                    0 0 10px #c70000,
-                    2px 2px 2px rgba(0,0,0,0.7),
-                    5px 15px 8px #580000,
-                    -4px 22px 12px #4d0000;
-            }
-            to {
-                text-shadow:
-                    0 0 10px #ff4500,
-                    0 0 20px #ff1100,
-                    2px 2px 3px rgba(0,0,0,0.7),
-                    6px 18px 10px #580000,
-                    -5px 28px 15px #4d0000,
-                    8px 40px 25px #400000;
-            }
-        }
-
-        /* Animación de flotar para el texto */
-        @keyframes float {
-            0% { transform: translateY(0px) rotate(-1.5deg); }
-            50% { transform: translateY(-25px) rotate(1.5deg); }
-            100% { transform: translateY(0px) rotate(-1.5deg); }
-        }
-
-        /* Retraso en la animación de cada letra para un efecto escalonado */
-        .animated-text span:nth-child(1) { animation-delay: 0s; }
-        .animated-text span:nth-child(2) { animation-delay: -1.5s; }
-        .animated-text span:nth-child(3) { animation-delay: -3s; }
-        .animated-text span:nth-child(4) { animation-delay: -4.5s; }
-
-        /* Estilo para el subtítulo */
-        .subtitle {
-            font-size: 2.5rem;
-            color: #9e0000;
-            text-shadow: 1px 1px 10px rgba(0, 0, 0, 1);
-            margin-top: 1rem; /* Acercamos el subtítulo al texto principal */
-
-            /* Efecto máquina de escribir */
-            overflow: hidden; /* Oculta el texto que aún no se ha "escrito" */
-            white-space: nowrap; /* Mantiene el texto en una sola línea */
-            border-right: .1em solid #ff4500; /* Simula el cursor que parpadea */
-            width: 0; /* La animación expandirá el ancho */
-            animation: 
-                typing 4s steps(24, end) forwards, /* Cambiado a forwards para que no se repita */
-                blink-caret .75s step-end infinite;
-        }
-
-        /* Keyframes para la animación de escritura */
-        @keyframes typing {
-            from { width: 0; }
-            to { width: 24ch; } /* 24ch es el ancho de los 24 caracteres de la frase */
-        }
-
-        /* Keyframes para el parpadeo del cursor */
-        @keyframes blink-caret {
-            from, to { border-color: transparent; }
-            50% { border-color: #ff4500; }
-        }
-
-
-        /* Media query para hacer el diseño adaptable a móviles (Responsive) */
-        @media (max-width: 768px) {
-            .content-container {
-                transform: translateX(0); /* Centramos el texto en pantallas pequeñas */
-                padding: 0 1rem; /* Añadimos un poco de espacio a los lados */
-                box-sizing: border-box;
-            }
-
-            .animated-text span {
-                font-size: 15vw; /* Hacemos el tamaño de la fuente adaptable al ancho de la pantalla */
-            }
-
-            .subtitle {
-                font-size: 1.5rem; /* Ajustamos el tamaño del subtítulo para móviles */
-            }
-
-            .demon {
-                font-size: 1.5rem; /* Reducimos el tamaño de los demonios */
-            }
+        .playing-glow {
+            animation: pulseGlow 2.5s infinite ease-in-out;
         }
     </style>
 </head>
-<body>
-    <div class="demon-rain-container"></div>
+<body class="text-white">
 
-    <div class="content-container">
-        <!-- Contenedor del texto, cada letra en un span para animarla individualmente -->
-        <div class="animated-text">
-            <span>T</span>
-            <span>E</span>
-            <span>K</span>
-            <span>I</span>
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Reproductor de Música Flotante -->
+    <div id="floating-player-container" class="fixed bottom-5 right-5 z-[100]">
+        <div class="relative group">
+            <audio id="audioPlayer" src="https://ryn.cl/ab.mp3" loop></audio>
+            <svg class="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                <circle class="text-black/20" stroke-width="5" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" />
+                <circle id="progress-ring" class="text-red-500 transition-all duration-300 ease-linear"
+                    stroke-width="5"
+                    stroke-dasharray="283"
+                    stroke-dashoffset="283"
+                    stroke-linecap="round"
+                    stroke="currentColor"
+                    fill="transparent"
+                    r="45"
+                    cx="50"
+                    cy="50" />
+            </svg>
+            <button id="floating-play-button" class="relative w-16 h-16 bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-white shadow-lg shadow-red-500/30 transition-transform duration-300 group-hover:scale-110">
+                <!-- Icono Play -->
+                <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="ml-1"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                <!-- Icono Pause -->
+                <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="hidden"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+            </button>
         </div>
-        <div class="subtitle">la diabla de tu infierno</div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const rainContainer = document.querySelector('.demon-rain-container');
-            const demonCount = 50; // Cantidad de demonios
-            const demons = ['😈', '💀', '🦇', '👹', '👻']; // Array de emojis de demonios
 
-            for (let i = 0; i < demonCount; i++) {
-                const demon = document.createElement('div');
-                demon.classList.add('demon');
-                
-                // Elige un emoji aleatorio
-                demon.innerText = demons[Math.floor(Math.random() * demons.length)];
+    <!-- Overlay de Login (oculto por defecto) -->
+    <div id="login-overlay" class="hidden fixed inset-0 z-50 flex items-center justify-center admin-modal-bg">
+        <div class="admin-modal-content p-8 rounded-lg shadow-lg w-full max-w-sm text-center relative">
+            <button id="close-login-overlay" class="absolute top-2 right-2 text-gray-400 hover:text-white text-3xl leading-none">&times;</button>
+            <h2 class="text-2xl font-bold mb-6">Iniciar Sesión</h2>
+            <form id="login-form">
+                <input id="username" type="text" placeholder="Usuario" class="form-input w-full mb-4" required>
+                <input id="password" type="password" placeholder="Contraseña" class="form-input w-full mb-4" required>
+                <button type="submit" class="btn-primary w-full">Entrar</button>
+                <p id="login-error" class="text-red-500 mt-4 text-sm h-4"></p>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Panel de Administración de Amigos (Modal) -->
+    <div id="admin-panel" class="hidden fixed inset-0 z-50 flex items-center justify-center admin-modal-bg">
+        <div class="admin-modal-content p-6 rounded-lg shadow-lg w-full max-w-3xl h-3/4 flex flex-col">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">Panel de Amigos</h2>
+                <button id="close-admin-panel" class="btn-secondary rounded-full p-2 leading-none">&times;</button>
+            </div>
+            <div class="flex-grow overflow-y-auto pr-2">
+                <div>
+                    <h3 class="font-bold mb-2">Añadir / Editar Amigo</h3>
+                    <form id="friend-form" class="grid grid-cols-1 md:grid-cols-3 gap-2 items-end p-3 bg-black/20 rounded-lg mb-4">
+                        <input type="hidden" id="friend-id-input">
+                        <div><label class="text-xs">Nombre</label><input id="friend-name-input" type="text" placeholder="Nombre" class="form-input w-full" required></div>
+                        <div><label class="text-xs">ID</label><input id="friend-id-user-input" type="text" placeholder="ID de usuario" class="form-input w-full"></div>
+                        <div><label class="text-xs">URL Imagen</label><input id="friend-img-input" type="url" placeholder="URL de la imagen" class="form-input w-full"></div>
+                        <div class="md:col-span-3 mt-2"><button type="submit" id="friend-submit-button" class="btn-primary w-full">Añadir Amigo</button></div>
+                    </form>
+                    <div id="admin-friends-list" class="space-y-2">
+                        <!-- Lista de amigos para admin se carga aquí -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                // Posición horizontal aleatoria
-                demon.style.left = `${Math.random() * 100}vw`;
-                
-                // Tamaño aleatorio
-                const size = Math.random() * 2 + 1.5; // entre 1.5rem y 3.5rem
-                demon.style.fontSize = `${size}rem`;
-                
-                // Duración de la animación aleatoria
-                const duration = Math.random() * 5 + 4; // entre 4 y 9 segundos
-                demon.style.animationDuration = `${duration}s`;
-                
-                // Retraso de la animación aleatorio
-                const delay = Math.random() * 10;
-                demon.style.animationDelay = `${delay}s`;
+    <!-- Contenido Principal -->
+    <div class="content-wrapper flex items-center justify-center p-4">
+        <div class="main-container">
+            <!-- Panel Izquierdo de Navegación -->
+            <div class="nav-panel p-6 flex flex-col items-center text-center border-r border-red-500/20">
+                <div class="relative">
+                    <img src="https://xatimg.com/image/ikbOSJlTUGeG.jpg" alt="Foto de Perfil" class="nav-avatar rounded-full w-28 h-28 object-cover mt-8">
+                    <span class="absolute bottom-3 right-2 block h-5 w-5 rounded-full bg-green-500 border-2 border-black"></span>
+                </div>
+                <h1 class="profile-name mt-4">Ƭкι•</h1>
+                <p class="text-gray-300/80 text-sm font-light tracking-widest mt-1">(16699)</p>
+                <nav class="mt-8 w-full flex flex-col flex-grow">
+                     <div class="space-y-3">
+                        <button class="nav-button active" data-target="inicio">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" /></svg>
+                            INICIO
+                        </button>
+                        <button class="nav-button" data-target="esposo">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" /></svg>
+                            MI AMOR
+                        </button>
+                        <button class="nav-button" data-target="amigos">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" /></svg>
+                            MIS AMIGOS
+                        </button>
+                     </div>
+                     <div class="mt-auto">
+                        <button id="show-login-button" class="nav-button">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                           EDITAR AMIGOS
+                        </button>
+                     </div>
+                </nav>
+            </div>
+            <!-- Área de Contenido Derecha -->
+            <div class="content-area p-8 overflow-y-auto">
+                 <!-- SECCIÓN INICIO -->
+                 <div id="inicio" class="content-section active">
+                    <div class="flex flex-col items-center justify-center h-full text-center">
+                        <blockquote class="pl-4 border-l-4 border-red-500 italic text-gray-300 max-w-sm">
+                            <p>"En un mundo lleno de Hipócritas, los sinceros somos los Malos"</p>
+                            <p class="mt-2">"Ni soy como dicen... Ni voy a ser como quieren..."</p>
+                        </blockquote>
+                    </div>
+                </div>
+                <!-- SECCIÓN MI AMOR (ESPOSO) -->
+                <div id="esposo" class="content-section">
+                    <div class="flex flex-col items-center justify-center h-full text-center">
+                        <img src="https://xatimg.com/image/EmJYUcy4NgTU.jpg" alt="Avatar Amor" class="nav-avatar rounded-full w-36 h-36 object-cover mx-auto mb-4">
+                        <h3 class="text-2xl font-bold text-white tracking-widest">LEX</h3>
+                        <p class="text-base text-gray-300/80 mt-2">(200003)</p>
+                        <div class="max-w-md mt-6 text-gray-300/90 font-light text-sm">
+                           <p class="italic">¡Eres el protagonista que le da sentido a cada capítulo de mi historia te amo ....♡!</p>
+                           <p class="mt-4">Hasta el final</p>
+                           <p>Promesas son Promesas</p>
+                           <p class="mt-2 font-semibold">05/31/25</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- SECCIÓN MIS AMIGOS -->
+                 <div id="amigos" class="content-section">
+                     <h2 class="text-2xl font-bold text-center mb-6 text-white uppercase tracking-widest">Mis Amigos</h2>
+                     <div id="friends-list-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- La lista de amigos se cargará desde Firestore -->
+                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                rainContainer.appendChild(demon);
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // Configuración de tu proyecto de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAoRKxUkAqeZy4Cgmry2x_5AzGBbde6kIE",
+            authDomain: "stream-b81ba.firebaseapp.com",
+            projectId: "stream-b81ba",
+            storageBucket: "stream-b81ba.firebasestorage.app",
+            messagingSenderId: "77635617548",
+            appId: "1:77635617548:web:750a282f11c41ed568ff29"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const friendsCollection = collection(db, 'amigos');
+
+        document.addEventListener('DOMContentLoaded', async () => {
+
+            try {
+                // Inicia sesión de forma anónima para obtener permisos de lectura/escritura
+                await signInAnonymously(auth);
+            } catch (error) {
+                console.error("Error en la autenticación anónima. Revisa la configuración en tu panel de Firebase.", error);
+                alert("Error de autenticación. Revisa la consola para más detalles.");
+                return;
             }
+
+            const loginOverlay = document.getElementById('login-overlay');
+            const adminPanel = document.getElementById('admin-panel');
+            const friendsListContainer = document.getElementById('friends-list-container');
+            const adminFriendsList = document.getElementById('admin-friends-list');
+            const friendForm = document.getElementById('friend-form');
+
+            // --- FUNCIÓN PARA RENDERIZAR AMIGOS (PÚBLICO Y ADMIN) ---
+            onSnapshot(friendsCollection, (snapshot) => {
+                friendsListContainer.innerHTML = '';
+                adminFriendsList.innerHTML = '';
+
+                if (snapshot.empty) {
+                     friendsListContainer.innerHTML = '<p class="col-span-2 text-center text-gray-400">Añade amigos desde el panel de administración.</p>';
+                }
+                
+                snapshot.forEach(doc => {
+                    const friend = doc.data();
+                    const friendId = doc.id;
+
+                    // Vista Pública
+                    const friendCard = `
+                        <div class="friend-card rounded-lg flex items-center p-4 text-left">
+                           <img src="${friend.img || 'https://placehold.co/80x80/8B0000/ffffff?text=?'}" alt="Avatar de ${friend.name}" class="rounded-full w-20 h-20 object-cover">
+                           <div class="ml-4">
+                              <h3 class="font-semibold text-white">${friend.name}</h3>
+                              ${friend.userId ? `<p class="text-xs text-gray-400/80 mt-1">ID: ${friend.userId}</p>` : ''}
+                           </div>
+                        </div>`;
+                    friendsListContainer.innerHTML += friendCard;
+                    
+                    // Vista Admin
+                    const friendRow = `
+                        <div class="flex items-center justify-between bg-black/20 p-2 rounded-lg">
+                            <p>${friend.name}</p>
+                            <div>
+                                <button class="edit-friend-btn btn-secondary text-xs px-2 py-1 rounded" data-id="${friendId}">Editar</button>
+                                <button class="delete-friend-btn btn-danger text-xs px-2 py-1 rounded" data-id="${friendId}">Eliminar</button>
+                            </div>
+                        </div>`;
+                    adminFriendsList.innerHTML += friendRow;
+                });
+            }, (error) => {
+                console.error("Error al leer de Firestore. Revisa tus reglas de seguridad en el panel de Firebase.", error);
+                friendsListContainer.innerHTML = '<p class="col-span-2 text-red-500">Error al cargar amigos. Revisa la configuración de Firebase.</p>';
+            });
+
+            // --- LÓGICA DE LOGIN Y PANELES ---
+            document.getElementById('show-login-button').addEventListener('click', () => loginOverlay.classList.remove('hidden'));
+            document.getElementById('close-login-overlay').addEventListener('click', () => loginOverlay.classList.add('hidden'));
+            document.getElementById('close-admin-panel').addEventListener('click', () => adminPanel.classList.add('hidden'));
+            
+            document.getElementById('login-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                if (username.toUpperCase() === 'TEKI' && password === 'teki2030') {
+                    loginOverlay.classList.add('hidden');
+                    adminPanel.classList.remove('hidden');
+                    e.target.reset();
+                    document.getElementById('login-error').textContent = '';
+                } else {
+                    document.getElementById('login-error').textContent = 'Usuario o contraseña incorrectos.';
+                }
+            });
+
+            // --- LÓGICA DE ADMINISTRACIÓN DE AMIGOS (CON FIRESTORE) ---
+            friendForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const id = document.getElementById('friend-id-input').value;
+                const friendData = {
+                    name: document.getElementById('friend-name-input').value,
+                    userId: document.getElementById('friend-id-user-input').value,
+                    img: document.getElementById('friend-img-input').value
+                };
+
+                try {
+                    if (id) { // Editando
+                        await updateDoc(doc(db, "amigos", id), friendData);
+                    } else { // Añadiendo
+                        await addDoc(friendsCollection, friendData);
+                    }
+                    friendForm.reset();
+                    document.getElementById('friend-id-input').value = '';
+                    document.getElementById('friend-submit-button').textContent = 'Añadir Amigo';
+                } catch(error) {
+                    console.error("Error al guardar en Firestore: ", error);
+                    alert("No se pudo guardar el amigo. Revisa la consola.");
+                }
+            });
+
+            adminFriendsList.addEventListener('click', async (e) => {
+                const id = e.target.dataset.id;
+                if (!id) return;
+
+                if (e.target.classList.contains('delete-friend-btn')) {
+                    if (confirm('¿Seguro que quieres eliminar a este amigo?')) {
+                        await deleteDoc(doc(db, "amigos", id));
+                    }
+                }
+
+                if (e.target.classList.contains('edit-friend-btn')) {
+                    const friendDoc = await getDoc(doc(db, "amigos", id));
+                    if (friendDoc.exists()) {
+                        const friend = friendDoc.data();
+                        document.getElementById('friend-id-input').value = friendDoc.id;
+                        document.getElementById('friend-name-input').value = friend.name;
+                        document.getElementById('friend-id-user-input').value = friend.userId;
+                        document.getElementById('friend-img-input').value = friend.img;
+                        document.getElementById('friend-submit-button').textContent = 'Actualizar Amigo';
+                        document.getElementById('friend-name-input').focus();
+                    }
+                }
+            });
+
+            // --- Lógica de Navegación del Menú ---
+            document.querySelectorAll('.nav-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetId = button.dataset.target;
+                    if (!targetId) return;
+                    
+                    document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+                    const targetSection = document.getElementById(targetId);
+                    if (targetSection) {
+                        targetSection.classList.add('active');
+                    }
+                });
+            });
+            
+            // --- Lógica del Reproductor de Música Flotante ---
+            const audioPlayer = document.getElementById('audioPlayer');
+            const floatingPlayButton = document.getElementById('floating-play-button');
+            const playerContainer = document.getElementById('floating-player-container').querySelector('.relative.group');
+            const playIcon = document.getElementById('play-icon');
+            const pauseIcon = document.getElementById('pause-icon');
+            const progressRing = document.getElementById('progress-ring');
+            const radius = progressRing.r.baseVal.value;
+            const circumference = radius * 2 * Math.PI;
+
+            progressRing.style.strokeDasharray = `${circumference} ${circumference}`;
+            progressRing.style.strokeDashoffset = circumference;
+
+            function setProgress(percent) {
+                if(isNaN(percent)) return;
+                const offset = circumference - (percent / 100) * circumference;
+                progressRing.style.strokeDashoffset = offset;
+            }
+
+            // Para que la música pueda empezar, se necesita una interacción del usuario.
+            // Se puede hacer que al primer click en cualquier lugar, se intente reproducir.
+            document.body.addEventListener('click', () => {
+                 const playPromise = audioPlayer.play();
+                 if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        console.log("El usuario debe interactuar de nuevo para reproducir.");
+                    });
+                }
+            }, { once: true });
+
+
+            floatingPlayButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (audioPlayer.paused) {
+                    audioPlayer.play();
+                } else {
+                    audioPlayer.pause();
+                }
+            });
+
+            audioPlayer.addEventListener('play', () => {
+                playIcon.classList.add('hidden');
+                pauseIcon.classList.remove('hidden');
+                playerContainer.classList.add('playing-glow');
+            });
+
+            audioPlayer.addEventListener('pause', () => {
+                playIcon.classList.remove('hidden');
+                pauseIcon.classList.add('hidden');
+                playerContainer.classList.remove('playing-glow');
+            });
+
+            audioPlayer.addEventListener('timeupdate', () => {
+                const progressPercent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+                setProgress(progressPercent);
+            });
+
+
+            // --- Animación de Partículas ---
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width; this.y = canvas.height + Math.random() * 100;
+                    this.radius = Math.random() * 1.5 + 0.5; this.speed = Math.random() * 1.5 + 0.5;
+                    this.opacity = Math.random() * 0.5 + 0.2;
+                    const colors = ['#ff4500', '#ff8c00', '#ff0000', '#8b0000'];
+                    this.color = colors[Math.floor(Math.random() * colors.length)];
+                }
+                draw() {
+                    ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color; ctx.globalAlpha = this.opacity; ctx.fill(); ctx.globalAlpha = 1;
+                }
+                update() {
+                    this.y -= this.speed;
+                    if (this.y < -10) { this.y = canvas.height + 10; this.x = Math.random() * canvas.width; }
+                }
+            }
+            function initParticles() {
+                particles = [];
+                let numberOfParticles = (canvas.width * canvas.height) / 9000;
+                for (let i = 0; i < numberOfParticles; i++) { particles.push(new Particle()); }
+            }
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (let p of particles) { p.update(); p.draw(); }
+                requestAnimationFrame(animateParticles);
+            }
+            window.addEventListener('resize', () => { resizeCanvas(); initParticles(); });
+            
+            // Iniciar animación
+            resizeCanvas();
+            initParticles();
+            animateParticles();
         });
     </script>
 </body>
 </html>
+

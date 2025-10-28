@@ -151,80 +151,30 @@
             50% { border-color: #C0C0C0; } /* Color plateado */
         }
 
-        /* Botón para abrir el video */
-        #open-music-btn {
+        /* Botón para Play/Pausa de la música (transparente, sin fondo ni borde) */
+        #music-toggle-btn {
             position: fixed;
             top: 50%;
             left: 15px;
             transform: translateY(-50%);
             z-index: 999;
             cursor: pointer;
-            font-size: 1.5rem;
-            background-color: rgba(0, 0, 0, 0.6);
-            color: #fff;
-            border-radius: 30px;
-            padding: 10px 20px;
+            font-size: 2.5rem; /* Aumentamos el tamaño para que sea más visible */
+            background-color: transparent; /* Fondo transparente */
+            color: #C0C0C0; /* Color plateado para el ícono */
+            border: none; /* Sin borde */
+            padding: 10px; /* Un poco de padding para que sea más fácil de pulsar */
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.3s ease, background-color 0.3s ease;
+            transition: transform 0.2s ease, color 0.2s ease; /* Transición más rápida para el hover */
             font-family: sans-serif;
-            white-space: nowrap;
+            user-select: none; /* Evita selección de texto */
         }
 
-        #open-music-btn .btn-text {
-            margin-left: 10px;
-            font-size: 1rem;
-        }
-
-        #open-music-btn:hover {
-            transform: translateY(-50%) scale(1.05);
-            background-color: rgba(0, 0, 0, 0.8);
-        }
-
-        /* Lightbox (ventana emergente) */
-        .lightbox-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            display: none; /* Oculto por defecto */
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .lightbox-content {
-            position: relative;
-            max-width: 90vw;
-            max-height: 90vh;
-        }
-
-        .lightbox-content iframe {
-            border: 3px solid #C0C0C0; /* Borde plateado */
-            border-radius: 8px;
-            width: 70vw;
-            max-width: 700px;
-            height: calc(70vw * 0.5625); /* Mantiene relación 16:9 */
-            max-height: 394px;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: -15px;
-            right: -15px;
-            font-size: 2.5rem;
-            color: #fff;
-            background-color: #808080; /* Gris para el botón de cerrar */
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            text-align: center;
-            line-height: 40px;
-            cursor: pointer;
-            font-family: sans-serif;
+        #music-toggle-btn:hover {
+            transform: translateY(-50%) scale(1.1); /* Ligeramente más grande en hover */
+            color: #f0f0f0; /* Un poco más brillante en hover */
         }
 
         /* Media queries para móviles */
@@ -232,41 +182,27 @@
             .animated-text span { font-size: 15vw; }
             .subtitle { font-size: 1.5rem; }
             .heart { font-size: 1.5rem; }
-            #open-music-btn {
-                font-size: 2rem;
-                width: 50px;
-                height: 50px;
-                padding: 0;
-                border-radius: 50%;
-            }
-            #open-music-btn .btn-text {
-                display: none;
+            #music-toggle-btn {
+                font-size: 3rem; /* Más grande en móviles */
+                width: 60px;
+                height: 60px;
+                left: 5px; /* Ajustamos la posición en móviles */
             }
         }
     </style>
 </head>
 <body>
-    <!-- Botón para abrir el video -->
-    <div id="open-music-btn">🎵</div>
+    <!-- Elemento de audio (oculto) --><audio id="audioPlayer" src="https://ryn.cl/yas.mp3" loop style="display: none;"></audio>
 
-    <!-- Lightbox (ventana emergente para el video) -->
-    <div id="music-lightbox" class="lightbox-overlay">
-        <div class="lightbox-content">
-            <span id="close-music-btn" class="close-btn">&times;</span>
-            <iframe id="youtube-video"
-                width="560" height="315"
-                src=""
-                title="YouTube video player"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen>
-            </iframe>
-        </div>
+    <!-- Botón para Play/Pausa --><div id="music-toggle-btn">
+        <!-- Ícono de Play inicial --><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5v14l11-7z"/>
+        </svg>
     </div>
 
-    <div class="heart-rain-container"></div>
+    <!-- Contenedor de la lluvia de corazones --><div class="heart-rain-container"></div>
 
-    <div class="content-container">
+    <!-- Contenedor del texto principal --><div class="content-container">
         <div class="animated-text">
             <span>𝓨𝓪𝓪𝔃</span>
         </div>
@@ -294,30 +230,45 @@
                 rainContainer.appendChild(heart);
             }
 
-            // Lógica del video emergente
-            const openBtn = document.getElementById('open-music-btn');
-            const closeBtn = document.getElementById('close-music-btn');
-            const lightbox = document.getElementById('music-lightbox');
-            const videoFrame = document.getElementById('youtube-video');
-            const videoSrc = "https://www.youtube.com/embed/7m9yb5BLVwo?autoplay=1&loop=1&playlist=7m9yb5BLVwo";
+            // --- LÓGICA DE AUDIO MEJORADA CON SVG ---
+            const audioPlayer = document.getElementById('audioPlayer');
+            const musicBtn = document.getElementById('music-toggle-btn');
 
-            openBtn.addEventListener('click', () => {
-                videoFrame.src = videoSrc;
-                lightbox.style.display = 'flex';
-            });
+            // Definimos los íconos SVG para Play y Pausa
+            const playIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M8 5v14l11-7z"/>
+                              </svg>`;
+            const pauseIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor">
+                                 <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                               </svg>`;
 
-            const closeLightbox = () => {
-                lightbox.style.display = 'none';
-                videoFrame.src = ""; // Detiene el video
-            };
-
-            closeBtn.addEventListener('click', closeLightbox);
-            
-            // Cierra el lightbox si se hace clic en el fondo oscuro
-            lightbox.addEventListener('click', (e) => {
-                if (e.target === lightbox) {
-                    closeLightbox();
+            musicBtn.addEventListener('click', () => {
+                if (audioPlayer.paused) {
+                    audioPlayer.play();
+                    musicBtn.innerHTML = pauseIcon; // Cambiar a ícono de Pausa
+                } else {
+                    audioPlayer.pause();
+                    musicBtn.innerHTML = playIcon; // Cambiar a ícono de Play
                 }
+            });
+            
+            // Opcional: Para asegurar que la música pueda empezar en algunos navegadores
+            // sin un clic directo en el botón, puedes hacer que el primer
+            // clic en cualquier parte de la página inicie la música si está pausada.
+            document.body.addEventListener('click', () => {
+                // Solo inicia si está pausado y el ícono actual es el de play (para evitar doble inicio)
+                if (audioPlayer.paused && musicBtn.innerHTML.includes('M8 5v14l11-7z')) {
+                    audioPlayer.play();
+                    musicBtn.innerHTML = pauseIcon;
+                }
+            }, { once: true }); // Solo se ejecuta una vez
+
+            // Sincronizar el estado del botón si el audio se detiene por otras razones (ej. finaliza)
+            audioPlayer.addEventListener('pause', () => {
+                musicBtn.innerHTML = playIcon;
+            });
+            audioPlayer.addEventListener('play', () => {
+                musicBtn.innerHTML = pauseIcon;
             });
         });
     </script>
